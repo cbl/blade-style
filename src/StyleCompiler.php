@@ -2,95 +2,140 @@
 
 namespace BladeStyle;
 
-use Illuminate\Support\Str;
-use BladeStyle\StyleHandler;
+use BladeStyle\Support\Style;
 use InvalidArgumentException;
-use BladeStyle\Compiler\Compiler;
-use BladeStyle\Compiler\CssCompiler;
-use BladeStyle\Compiler\LessCompiler;
 use Illuminate\Support\Facades\File;
-use BladeStyle\Compiler\SassCompiler;
-use BladeStyle\Compiler\StylusCompiler;
+use BladeStyle\Compiler\CompilerInterface;
 
 class StyleCompiler
 {
     /**
-     * Compiled paths.
+     * Style compiler.
+     *
+     * @var array
+     */
+    protected $compiler = [];
+
+    /**
+     * List of compiled ids.
      *
      * @var array
      */
     protected $compiled = [];
 
     /**
-     * Style compiler.
+     * List of changed ids.
      *
      * @var array
      */
-    protected $compiler = [
-        'css' => CssCompiler::class,
-        'scss' => SassCompiler::class,
-        'sass' => SassCompiler::class,
-        'stylus' => StylusCompiler::class,
-        'less' => LessCompiler::class,
-    ];
+    protected $changed = [];
+
+    /**
+     * List of removed ids.
+     *
+     * @var array
+     */
+    protected $removed = [];
+
+    /**
+     * Create new StyleCompiler instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->compiled = $this->getCompiledStyleIds();
+    }
+
+    /**
+     * Get compiled style ids.
+     *
+     * @return array
+     */
+    public function getCompiledStyleIds()
+    {
+        return collect(glob(style_storage_path() . '/*.css'))
+            ->map(function ($path) {
+                return style_id_from_path($path);
+            })
+            ->toArray();
+    }
+
+    /**
+     * Register style compiler.
+     *
+     * @param string $lang
+     * @param \BladeStyle\Compiler\CompilerInterface $compiler
+     * @return void
+     */
+    public function registerCompiler(string $lang, CompilerInterface $compiler)
+    {
+        $this->compiler[$lang] = $compiler;
+    }
 
     /**
      * Compile style.
      *
      * @param string $style
-     * @param string $name
+     * @param string $styleId
      * @param string $lang
-     * @return boolean|null
+     * @return void
      */
-    public function compile(string $style, $styleId, $lang = 'css')
+    public function compile(string $style, string $styleId, $lang = 'css')
     {
-        $path = storage_path("framework/styles/{$styleId}.css");
-
-        if (in_array($path, $this->compiled)) {
-            return false;
-        }
-
-        if (File::exists($path) && !$this->hasChanged($path, $style)) {
-            return false;
-        }
+        $path = $this->getCompiledPath($styleId);
 
         if (!array_key_exists($lang, $this->compiler)) {
             throw new InvalidArgumentException("No css compiler for language \"{$lang}\" found.");
         }
 
-        $compiler = new $this->compiler[$lang](
-            $style,
-            $styleId,
-            $path,
-            $this->getBladePathFromStyleId($styleId)
+        $compiler = $this->compiler[$lang]->make(
+            blade_path_from_compiled_name($styleId)
         );
 
-        return $compiler->compile();
-    }
+        $compiler->compile($style, $path);
 
-    public function getBladePathFromStyleId($id)
-    {
-        return trim(Str::between(File::get(storage_path("framework/views/{$id}.php")), 'PATH', 'ENDPATH'));
+        $this->setChanged($styleId);
     }
 
     /**
-     * Compile sass.
+     * Set changed.
+     *
+     * @param string $styleId
+     * @return void
+     */
+    protected function setChanged(string $styleId)
+    {
+        // Add to compiled.
+        if (!in_array($styleId, $this->compiled)) {
+            $this->compiled[] = $styleId;
+        }
+
+        // Add to changed.
+        if (!in_array($styleId, $this->changed)) {
+            $this->changed[] = $styleId;
+        }
+
+        // Remove from removed.
+        if (($key = array_search($styleId, $this->removed)) !== false) {
+            unset($this->removed[$key]);
+        }
+    }
+
+    /**
+     * Does style need to be recompiled.
      *
      * @param string $style
-     * @return string
+     * @param string $path
+     * @return boolean
      */
-    public function compileSass($style, $styleId, $path)
+    protected function needsToBeCompiled($style, $path)
     {
-    }
+        if (!File::exists($path)) {
+            return true;
+        }
 
-    /**
-     * Get compiled paths.
-     *
-     * @return array
-     */
-    public function getCompiled()
-    {
-        return $this->compiled;
+        return $this->hasChanged($path, $style);
     }
 
     /**
@@ -100,9 +145,9 @@ class StyleCompiler
      * @param string $name
      * @return string
      */
-    public function getCompiledPath(string $style, string $name)
+    public function getCompiledPath(string $styleId)
     {
-        return storage_path('framework/styles/' . sha1($name) . '.php');
+        return storage_path("framework/styles/{$styleId}.css");
     }
 
     /**
@@ -113,7 +158,7 @@ class StyleCompiler
      */
     public function hasChanged($path, $style)
     {
-        $oldStyle = app(StyleHandler::class)->getStyle($path);
+        $oldStyle = Style::get($path);
 
         return $oldStyle != $style;
     }

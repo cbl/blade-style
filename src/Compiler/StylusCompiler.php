@@ -2,18 +2,18 @@
 
 namespace BladeStyle\Compiler;
 
-use BladeStyle\Compiler\Compiler;
-
-class StylusCompiler extends Compiler
+class StylusCompiler extends CompileAdapter
 {
     /**
-     * Compile scss to file.
+     * Compile stylus string and store it to the given path.
      *
+     * @param string $style
+     * @param string $path
      * @return void
      */
-    public function compile()
+    public function compile(string $style, string $path)
     {
-        $error = shell_exec($this->getCompileCommand());
+        $error = shell_exec($this->getCompileCommand($style, $path));
         if (!$error) {
             return;
         }
@@ -23,12 +23,14 @@ class StylusCompiler extends Compiler
     /**
      * Get compile command.
      *
+     * @param string $style
+     * @param string $path
      * @return void
      */
-    public function getCompileCommand()
+    public function getCompileCommand(string $style, string $path)
     {
         $compilerPath = __DIR__ . '/../../scripts/compile-stylus.js';
-        $oneLineStyle = str_replace("\n", '<br>', $this->style);
-        return "/Users/helen/.nvm/versions/node/v12.16.3/bin/node $compilerPath '{$oneLineStyle}' --path={$this->path} 2>&1";
+        $oneLineStyle = str_replace("\n", '<br>', $style);
+        return "/Users/helen/.nvm/versions/node/v12.16.3/bin/node $compilerPath '{$oneLineStyle}' --path={$path} 2>&1";
     }
 }

@@ -11,41 +11,35 @@ use Illuminate\Support\Facades\File;
 
 class StyleController
 {
-    protected $handler;
-
+    /**
+     * Style comipler.
+     *
+     * @var string
+     */
     protected $from;
 
-    public function __construct()
-    {
-        $this->handler = app(StyleHandler::class);
-        $this->compiler = app(StyleCompiler::class);
-    }
-
-    public function changed(Request $request, $from)
+    /**
+     * Compile.
+     *
+     * @param Request $request
+     * @param Int $from
+     * @return void
+     */
+    public function __invoke(Request $request, $from)
     {
         $this->from = Carbon::createFromTimestamp($from / 1000);
 
         $this->compileChangedStyles();
 
-        return response()->json(['updated' => $this->findChangedStyles()], 200);
+        $updated = [
+            'changed' => $this->compiler->getChanged(),
+            'removed' => $this->compiler->removed(),
+        ];
+
+        return response()->json(['updated' => $updated], 200);
     }
 
-    protected function findChangedStyles()
-    {
-        $changed = [];
 
-        foreach (glob(storage_path('framework/styles/*.css')) as $path) {
-            $lastModified = Carbon::parse(filemtime($path));
-
-            if ($lastModified < $this->from) {
-                continue;
-            }
-
-            $changed[$this->handler->getIdFromPath($path)] = File::get($path);
-        }
-
-        return $changed;
-    }
 
     protected function compileChangedStyles()
     {

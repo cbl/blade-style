@@ -19,7 +19,7 @@ class StyleException extends InvalidArgumentException
     {
         parent::__construct($message, $code, $previous);
 
-        $this->file = $options['file'];
-        $this->line = $options['line'];
+        $this->file = $options['file'] ?? $this->file;
+        $this->line = $options['line'] ?? $this->line;
     }
 }

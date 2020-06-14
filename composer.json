@@ -1,26 +1,26 @@
 {
-    "name": "cbl/blade-style",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "cbl",
-            "email": "lennart.carbe@gmail.com"
-        }
-    ],
-    "require": {},
-    "autoload": {
-        "psr-4": {
-            "BladeStyle\\": "src/"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "BladeStyle\\ServiceProvider"
-            ]
-        }
-    }
+	"name": "cbl/blade-style",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "cbl",
+			"email": "lennart.carbe@gmail.com"
+		}
+	],
+	"require": {},
+	"autoload": {
+		"psr-4": {
+			"BladeStyle\\": "src/"
+		},
+		"files": [
+			"src/Support/helpers.php"
+		]
+	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"BladeStyle\\ServiceProvider"
+			]
+		}
+	}
 }

@@ -3,12 +3,23 @@
 namespace BladeStyle;
 
 use Illuminate\Support\Str;
+use BladeStyle\Support\Style;
 use Illuminate\View\Component;
 
 class StyleComponent extends Component
 {
+    /**
+     * Style language.
+     *
+     * @var string
+     */
     public $lang;
 
+    /**
+     * Style id.
+     *
+     * @var string
+     */
     public $styleId;
 
     /**
@@ -25,7 +36,7 @@ class StyleComponent extends Component
         if (!$parentPath) {
             return;
         }
-        $this->styleId = app(StyleHandler::class)->getIdFromPath($parentPath);
+        $this->styleId = Style::getIdFromPath($parentPath);
     }
 
     /**

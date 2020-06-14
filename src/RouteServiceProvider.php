@@ -15,6 +15,11 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map()
     {
-        Route::get('watch-styles/{from}', StyleController::class . '@changed');
+        // Route only accessible when debugging.
+        if (!env('APP_DEBUG')) {
+            return;
+        }
+
+        Route::get('watch-styles/{from}', StyleController::class);
     }
 }

@@ -4,5 +4,10 @@ if(!$styleId) {
     return;
 }
 
-app(BladeStyle\StyleCompiler::class)->compile($slot, $styleId, $lang);
+if(!config('app.debug')) {
+    return;
+}
+
+// Only compile when app debug is true.
+app('blade.style.compiler')->compile($slot, $styleId, $lang);
 ?>
