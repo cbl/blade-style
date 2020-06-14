@@ -3,8 +3,8 @@
 namespace BladeStyle;
 
 use Illuminate\Support\Str;
-use BladeStyle\Support\Style;
 use Illuminate\View\Component;
+use Illuminate\Support\Facades\File;
 
 class StyleComponent extends Component
 {
@@ -20,7 +20,7 @@ class StyleComponent extends Component
      *
      * @var string
      */
-    public $styleId;
+    public $parentViewPath;
 
     /**
      * Create new StyleComponent instance.
@@ -32,19 +32,29 @@ class StyleComponent extends Component
     {
         $this->lang = $lang;
 
-        $parentPath = $this->getParentPath();
-        if (!$parentPath) {
-            return;
-        }
-        $this->styleId = Style::getIdFromPath($parentPath);
+        $parentViewPath = $this->getParentViewPath();
     }
 
     /**
-     * Get parent path.
+     * Get parent view path.
      *
-     * @return void
+     * @return string|null
      */
-    protected function getParentPath()
+    protected function getParentViewPath()
+    {
+        $parentCompiledPath = $this->getParentCompiledPath();
+        if (!$parentCompiledPath) {
+            return;
+        }
+        return trim(Str::between(File::get($this->getParentCompiledPath()), 'PATH', 'ENDPATH'));
+    }
+
+    /**
+     * Get parent compiled path.
+     *
+     * @return string|null
+     */
+    public function getParentCompiledPath()
     {
         foreach (debug_backtrace() as $trace) {
             if (!array_key_exists('file', $trace)) {

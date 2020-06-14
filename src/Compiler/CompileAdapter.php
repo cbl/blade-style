@@ -46,6 +46,7 @@ abstract class CompileAdapter implements CompilerInterface
      */
     public function throwStyleException(string $message, int $line)
     {
+        //throw new \Exception(blade_style_starts_at($this->bladePath) + $line);
         throw new StyleException($message, [
             'file' => $this->bladePath,
             'line' => blade_style_starts_at($this->bladePath) + $line

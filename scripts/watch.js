@@ -1,9 +1,4 @@
-let lastCheck = new Date();
-let delay = 1000;
-
-document.getElementById('blade-style-error').click(function() {
-	console.log('CLICKED');
-});
+const delay = 1000;
 
 function httpGet(url) {
 	var xmlHttp = new XMLHttpRequest();
@@ -49,6 +44,7 @@ function handleResponse(response) {
 	}
 
 	for (let id in changes.updated) {
+		console.log('CHANGED', id, changes.updated);
 		updateChanges(id, changes.updated[id]);
 	}
 	for (let key in changes.removed) {
@@ -59,15 +55,16 @@ function handleResponse(response) {
 function shwoError(response) {
 	let element = document.getElementById('blade-style-error');
 	let wrapper = document.querySelector('#blade-style-error div');
-	wrapper.innerHTML = `<iframe src="watch-styles/${lastCheck.getTime()}"></iframe>`;
+	wrapper.innerHTML = `<iframe src="compile-styles"></iframe>`;
 	element.style.display = 'block';
 }
 
 let errorMessage = '';
 
 function checkTime() {
-	let response = httpGet(`watch-styles/${lastCheck.getTime()}`);
+	let response = httpGet(`compile-styles`);
 	console.log(response.status);
+
 	if (response.status == 200) {
 		this.handleResponse(response);
 		errorMessage = '';
@@ -84,8 +81,7 @@ function checkTime() {
 		errorMessage = response.responseText;
 	}
 
-	lastCheck = new Date();
-	setTimeout(function() {
+	setTimeout(function () {
 		checkTime();
 	}, delay);
 }

@@ -2,7 +2,6 @@
 
 namespace BladeStyle;
 
-use BladeStyle\Support\Style;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\File;
 use BladeStyle\Compiler\CompilerInterface;
@@ -76,26 +75,67 @@ class StyleCompiler
     /**
      * Compile style.
      *
-     * @param string $style
-     * @param string $styleId
-     * @param string $lang
+     * @param string $viewPath
      * @return void
      */
-    public function compile(string $style, string $styleId, $lang = 'css')
+    public function compile(string $viewPath)
     {
-        $path = $this->getCompiledPath($styleId);
+        $styleId = sha1($viewPath);
+        $compiledPath = $this->getCompiledPath($styleId);
+
+        if (!$this->isExpired($compiledPath, $viewPath)) {
+            return false;
+        }
+
+        $string = File::get($viewPath);
+        $style = $this->getStyleFromString($string);
+        $lang = $this->getLangFromString($string);
+
+        if (!$style) {
+            return false;
+        }
 
         if (!array_key_exists($lang, $this->compiler)) {
             throw new InvalidArgumentException("No css compiler for language \"{$lang}\" found.");
         }
 
-        $compiler = $this->compiler[$lang]->make(
-            blade_path_from_compiled_name($styleId)
-        );
+        $compiler = $this->compiler[$lang]->make($viewPath);
 
-        $compiler->compile($style, $path);
+        $compiler->compile($style, $compiledPath);
 
         $this->setChanged($styleId);
+
+        return true;
+    }
+
+    /**
+     * Get lang from string.
+     *
+     * @param string $string
+     * @return string
+     */
+    public function getLangFromString(string $string)
+    {
+        preg_match('/<x-style(?:\s+(?:lang=["\'](?P<lang>[^"\'<>]+)["\']|\w+=["\'][^"\'<>]+["\']))+/i', $string, $matches);
+
+        return $matches[1] ?? 'css';
+    }
+
+    /**
+     * Get style from string.
+     *
+     * @param string $string
+     * @return string|null
+     */
+    public function getStyleFromString($string)
+    {
+        preg_match('/<x-style[^>]*>(.|\n)*?<\/x-style>/', $string, $matches);
+
+        if (empty($matches)) {
+            return;
+        }
+
+        return preg_replace('/<[^>]*>/', '', $matches[0]);
     }
 
     /**
@@ -123,19 +163,40 @@ class StyleCompiler
     }
 
     /**
+     * Get changes.
+     *
+     * @return array
+     */
+    public function hasChanges()
+    {
+        return !empty($this->changed);
+    }
+
+    /**
+     * Get changed ids.
+     *
+     * @return void
+     */
+    public function getChanged()
+    {
+        return $this->changed;
+    }
+
+    /**
      * Does style need to be recompiled.
      *
-     * @param string $style
-     * @param string $path
+     * @param string $compiledPath
+     * @param string $viewPath
      * @return boolean
      */
-    protected function needsToBeCompiled($style, $path)
+    protected function isExpired($compiledPath, $viewPath)
     {
-        if (!File::exists($path)) {
+        if (!File::exists($compiledPath)) {
             return true;
         }
 
-        return $this->hasChanged($path, $style);
+        return File::lastModified($viewPath) >=
+            File::lastModified($compiledPath);
     }
 
     /**
@@ -148,18 +209,5 @@ class StyleCompiler
     public function getCompiledPath(string $styleId)
     {
         return storage_path("framework/styles/{$styleId}.css");
-    }
-
-    /**
-     * Determine if the style at the given path has changed.
-     *
-     * @param  string  $path
-     * @return bool
-     */
-    public function hasChanged($path, $style)
-    {
-        $oldStyle = Style::get($path);
-
-        return $oldStyle != $style;
     }
 }

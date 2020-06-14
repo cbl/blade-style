@@ -20,6 +20,6 @@ class RouteServiceProvider extends ServiceProvider
             return;
         }
 
-        Route::get('watch-styles/{from}', StyleController::class);
+        Route::get('compile-styles', StyleController::class);
     }
 }

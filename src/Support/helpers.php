@@ -12,7 +12,7 @@ if (!function_exists('blade_style_starts_at')) {
      */
     function blade_style_starts_at(string $path)
     {
-        return count(explode("\n", explode('x-style', File::get($path))[0])) - 1;
+        return count(explode("\n", explode('x-style', File::get($path))[0]));
     }
 }
 
@@ -25,7 +25,13 @@ if (!function_exists('blade_path_from_compiled_name')) {
      */
     function blade_path_from_compiled_name(string $name)
     {
-        return trim(Str::between(File::get(storage_path("framework/views/{$name}.php")), 'PATH', 'ENDPATH'));
+        $path = storage_path("framework/views/{$name}.php");
+
+        if (!File::exists($path)) {
+            return;
+        }
+
+        return trim(Str::between(File::get($path), 'PATH', 'ENDPATH'));
     }
 }
 
@@ -51,5 +57,38 @@ if (!function_exists('style_storage_path')) {
     function style_storage_path()
     {
         return storage_path('framework/styles');
+    }
+}
+
+if (!function_exists('get_view_name_from_path')) {
+    /**
+     * Get view name form path.
+     * 
+     * @param string $path
+     * @return string
+     */
+    function get_view_name_from_path(string $path)
+    {
+        $finder = app('view.finder');
+
+        foreach ($finder->getPaths() as $directory) {
+            if (Str::startsWith($path, $directory)) {
+                return path_to_view_name($directory, $path);
+            }
+        }
+    }
+}
+
+if (!function_exists('path_to_view_name')) {
+    /**
+     * Path to view name.
+     *
+     * @param string $directory 
+     * @param string $path
+     * @return string
+     */
+    function path_to_view_name(string $directory, string $path)
+    {
+        return Str::replaceFirst('.', '', str_replace(['/', '\\'], '.', str_replace('.blade.php', '', str_replace($directory, '', $path))));
     }
 }

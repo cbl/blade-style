@@ -110,12 +110,13 @@ class StyleLoader
 
         if (config('app.debug')) {
             $debugStyles = File::get(__DIR__ . '/../styles/debug.css');
-
             $tags[] = "<style>{$debugStyles}</style>";
         }
 
-        foreach ($this->styles as $path => $style) {
+
+        foreach ($this->all($fresh = true) as $path => $style) {
             $styleId = $this->getIdFromPath($path);
+
             $tags[] = "<style style:id=\"{$styleId}\">\n{$style}\n</style>";
         }
 

@@ -1,6 +1,6 @@
 
 <?php
-if(!$styleId) {
+if(!$parentViewPath) {
     return;
 }
 
@@ -9,5 +9,5 @@ if(!config('app.debug')) {
 }
 
 // Only compile when app debug is true.
-app('blade.style.compiler')->compile($slot, $styleId, $lang);
+app('blade.style.compiler')->compile($parentViewPath);
 ?>

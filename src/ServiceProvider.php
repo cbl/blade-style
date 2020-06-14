@@ -10,9 +10,11 @@ use BladeStyle\Compiler\SassCompiler;
 use Illuminate\Support\Facades\Blade;
 use BladeStyle\Directives\BladeStyles;
 use BladeStyle\Directives\WatchStyles;
+use BladeStyle\Commands\CompileCommand;
 use BladeStyle\Commands\InstallCommand;
 use BladeStyle\Compiler\StylusCompiler;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Routing\CompiledRouteCollection;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
 class ServiceProvider extends LaravelServiceProvider
@@ -42,6 +44,8 @@ class ServiceProvider extends LaravelServiceProvider
      */
     public function boot()
     {
+
+        return;
         // Automaticly publish storage.
         Artisan::call('vendor:publish', [
             '--tag' => 'storage'
@@ -65,14 +69,15 @@ class ServiceProvider extends LaravelServiceProvider
     }
 
     /**
-     * Register artisan commands.
+     * Register the given commands.
      *
      * @return void
      */
     public function registerCommands()
     {
         $this->commands([
-            InstallCommand::class
+            InstallCommand::class,
+            CompileCommand::class
         ]);
     }
 
