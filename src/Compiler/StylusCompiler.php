@@ -4,7 +4,7 @@ namespace BladeStyle\Compiler;
 
 use BladeStyle\Compiler\Compiler;
 
-class SassCompiler extends Compiler
+class StylusCompiler extends Compiler
 {
     /**
      * Compile scss to file.
@@ -18,7 +18,6 @@ class SassCompiler extends Compiler
             return;
         }
         $error = json_decode($error);
-        $this->throwStyleException($error->message, $error->line);
     }
 
     /**
@@ -28,7 +27,7 @@ class SassCompiler extends Compiler
      */
     public function getCompileCommand()
     {
-        $compilerPath = __DIR__ . '/../../scripts/compile-sass.js';
+        $compilerPath = __DIR__ . '/../../scripts/compile-stylus.js';
         $oneLineStyle = str_replace("\n", '<br>', $this->style);
         return "/Users/helen/.nvm/versions/node/v12.16.3/bin/node $compilerPath '{$oneLineStyle}' --path={$this->path} 2>&1";
     }

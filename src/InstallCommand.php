@@ -37,7 +37,9 @@ class InstallCommand extends Command
      */
     public function handle()
     {
-        dd(__DIR__ . '/..');
-        shell_exec('cd ' . __DIR__ . '/..;npm i');
+        $path = __DIR__ . '/..';
+        shell_exec("npm i node-sass --prefix {$path}");
+        shell_exec("npm i stylus --prefix {$path}");
+        shell_exec("npm i less-node --prefix {$path}");
     }
 }

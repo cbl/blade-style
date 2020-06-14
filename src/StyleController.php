@@ -87,7 +87,10 @@ class StyleController
                 continue;
             }
 
-            $this->compiler->compile($style, $styleId, 'scss');
+            preg_match('/(?<=\blang=")[^"]*/', File::get($file), $matches);
+            $lang = $matches[0] ?? 'css';
+
+            $this->compiler->compile($style, $styleId, $lang);
         }
     }
 

@@ -7,8 +7,10 @@ use BladeStyle\StyleHandler;
 use InvalidArgumentException;
 use BladeStyle\Compiler\Compiler;
 use BladeStyle\Compiler\CssCompiler;
+use BladeStyle\Compiler\LessCompiler;
 use Illuminate\Support\Facades\File;
 use BladeStyle\Compiler\SassCompiler;
+use BladeStyle\Compiler\StylusCompiler;
 
 class StyleCompiler
 {
@@ -28,6 +30,8 @@ class StyleCompiler
         'css' => CssCompiler::class,
         'scss' => SassCompiler::class,
         'sass' => SassCompiler::class,
+        'stylus' => StylusCompiler::class,
+        'less' => LessCompiler::class,
     ];
 
     /**

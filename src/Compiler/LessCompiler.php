@@ -4,7 +4,7 @@ namespace BladeStyle\Compiler;
 
 use BladeStyle\Compiler\Compiler;
 
-class SassCompiler extends Compiler
+class LessCompiler extends Compiler
 {
     /**
      * Compile scss to file.
@@ -28,7 +28,7 @@ class SassCompiler extends Compiler
      */
     public function getCompileCommand()
     {
-        $compilerPath = __DIR__ . '/../../scripts/compile-sass.js';
+        $compilerPath = __DIR__ . '/../../scripts/compile-less.js';
         $oneLineStyle = str_replace("\n", '<br>', $this->style);
         return "/Users/helen/.nvm/versions/node/v12.16.3/bin/node $compilerPath '{$oneLineStyle}' --path={$this->path} 2>&1";
     }
