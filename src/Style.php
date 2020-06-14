@@ -65,7 +65,7 @@ class Style
         $this->name = $name;
         $this->config = config('styles.styles')[$name];
 
-        $this->path = $this->config['path'];
+        $this->path = public_path($this->config['public_path']);
         $this->alias = $this->config['alias'] ?? [];
         $this->requires = $this->config['requires'] ?? [];
         $this->compiler = app('blade.style.compiler');
@@ -90,20 +90,7 @@ class Style
         }
 
         $style = '';
-        foreach ($this->getRequiredFiles() as $file) {
-            if (!$this->compiler->canBeCompiled($file)) {
-                continue;
-            }
-
-
-            $compiled = $this->compiler->getCompiledPath(
-                $this->compiler->getStyleIdFromPath($file)
-            );
-
-            if (!File::exists($compiled)) {
-                continue;
-            }
-
+        foreach ($this->getCompiledFiles() as $compiled) {
             $style .= File::get($compiled);
         }
 
@@ -113,6 +100,33 @@ class Style
         }
 
         File::put($this->path, $style);
+    }
+
+    /**
+     * Get compiled files.
+     *
+     * @return array
+     */
+    protected function getCompiledFiles()
+    {
+        $files = [];
+        foreach ($this->getRequiredFiles() as $file) {
+            if (!$this->compiler->canBeCompiled($file)) {
+                continue;
+            }
+
+            $compiled = $this->compiler->getCompiledPath(
+                $this->compiler->getStyleIdFromPath($file)
+            );
+
+            if (!File::exists($compiled)) {
+                continue;
+            }
+
+            $files[] = $compiled;
+        }
+
+        return $files;
     }
 
     /**
@@ -156,7 +170,7 @@ class Style
             return false;
         }
 
-        return $this->compiler->compile($file);
+        return $this->compiler->compile($file, $this->alias);
     }
 
     /**
@@ -166,6 +180,21 @@ class Style
      */
     public function __toString()
     {
-        return '';
+        if (!config('app.debug')) {
+            return "<link href=\"{$this->config['public_path']}\" rel=\"stylesheet\">\n";
+        } else {
+            $files = array_merge(
+                [__DIR__ . '/../styles/debug.css'],
+                $this->getCompiledFiles()
+            );
+
+
+            return collect($files)
+                ->map(function ($file) {
+                    $style = File::get($file);
+                    $styleId = style_id_from_path($file);
+                    return "<style style:id=\"{$styleId}\">\n{$style}</style>";
+                })->implode("\n");
+        }
     }
 }

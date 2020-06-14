@@ -15,7 +15,7 @@ class WatchStyles
      */
     public function compile($expression)
     {
-        return $this->errorModal() . $this->watchScript($expression);
+        return "<?php\nif(config('app.debug')):\n?>\n" . $this->errorModal() . $this->watchScript($expression) . "\n<?php\nendif;\n?>";
     }
 
     /**
@@ -31,7 +31,7 @@ class WatchStyles
             throw new InvalidArgumentException('Missing style name for @watchStyles.');
         }
 
-        return "<script>const styleName = '<?php echo {$expression}; ?>'\n{$script}</script>";
+        return "<script>const styleName = '<?php echo {$expression}; ?>';\n{$script}</script>";
     }
 
     /**

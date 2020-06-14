@@ -77,14 +77,15 @@ class StyleCompiler
      * Compile style.
      *
      * @param string $path
+     * @param array $alias
      * @return void
      * 
      * @throws \InvalidArgumentException
      */
-    public function compile(string $path)
+    public function compile(string $path, array $alias = [])
     {
         if (Str::endsWith($path, 'blade.php')) {
-            return $this->compileView($path);
+            return $this->compileView($path, $alias);
         }
 
         throw new InvalidArgumentException("Could not compile file {$path}.");
@@ -108,9 +109,10 @@ class StyleCompiler
      * Compile view.
      *
      * @param string $viewPath
+     * @param array $alias
      * @return void
      */
-    protected function compileView($viewPath)
+    protected function compileView($viewPath, array $alias = [])
     {
         $styleId = sha1($viewPath);
         $compiledPath = $this->getCompiledPath($styleId);
@@ -120,7 +122,7 @@ class StyleCompiler
         }
 
         $string = File::get($viewPath);
-        $style = $this->getStyleFromString($string);
+        $style = $this->setAlias($this->getStyleFromString($string), $alias);
         $lang = $this->getLangFromString($string);
 
         if (!$style) {
@@ -138,6 +140,26 @@ class StyleCompiler
         $this->setChanged($styleId);
 
         return true;
+    }
+
+    /**
+     * Set alias.
+     *
+     * @param string $style
+     * @param array $alias
+     * @return string
+     */
+    public function setAlias(string $style, array $alias = [])
+    {
+        foreach ($alias as $search => $replace) {
+            preg_match('/\"' . $search . '.*?\"/si', $style, $matches);
+            foreach ($matches as $match) {
+                $newReplace = str_replace($search, $replace . '/', $match);
+                $style = str_replace($match, $newReplace, $style);
+            }
+        }
+
+        return $style;
     }
 
     /**
