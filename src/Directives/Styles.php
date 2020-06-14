@@ -2,7 +2,7 @@
 
 namespace BladeStyle\Directives;
 
-class BladeStyles
+class Styles
 {
     /**
      * Compile @bladeStyles
@@ -12,6 +12,6 @@ class BladeStyles
      */
     public function compile($expression)
     {
-        return "<?php echo app('blade.style')->getStyleTags();?>";
+        return "<?php echo app('blade.style')->getStyle($expression);?>";
     }
 }

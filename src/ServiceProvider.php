@@ -2,13 +2,13 @@
 
 namespace BladeStyle;
 
+use BladeStyle\Directives\Styles;
 use BladeStyle\Compiler\CssCompiler;
 use BladeStyle\RouteServiceProvider;
 use Illuminate\Support\Facades\View;
 use BladeStyle\Compiler\LessCompiler;
 use BladeStyle\Compiler\SassCompiler;
 use Illuminate\Support\Facades\Blade;
-use BladeStyle\Directives\BladeStyles;
 use BladeStyle\Directives\WatchStyles;
 use BladeStyle\Commands\CompileCommand;
 use BladeStyle\Commands\InstallCommand;
@@ -60,8 +60,8 @@ class ServiceProvider extends LaravelServiceProvider
     public function blade()
     {
         Blade::component('style', StyleComponent::class);
-        Blade::directive('bladeStyles', function ($expression) {
-            return (new BladeStyles)->compile($expression);
+        Blade::directive('styles', function ($expression) {
+            return (new Styles)->compile($expression);
         });
         Blade::directive('watchStyles', function ($expression) {
             return (new WatchStyles)->compile($expression);
@@ -119,5 +119,14 @@ class ServiceProvider extends LaravelServiceProvider
         $this->publishes([
             __DIR__ . '/../storage/' => storage_path('framework/styles')
         ], 'storage');
+
+        $this->publishes([
+            __DIR__ . '/../config' => config_path(),
+        ], 'config');
+
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/styles.php',
+            'styles'
+        );
     }
 }

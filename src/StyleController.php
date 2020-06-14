@@ -25,9 +25,9 @@ class StyleController
      * @param Int $from
      * @return void
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, string $name)
     {
-        Artisan::call('style:compile');
+        Artisan::call("style:compile {$name}");
 
         $updated = [
             'updated' => $this->getUpdated(),

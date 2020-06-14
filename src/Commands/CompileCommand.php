@@ -2,6 +2,7 @@
 
 namespace BladeStyle\Commands;
 
+use BladeStyle\Style;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 
@@ -12,7 +13,7 @@ class CompileCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'style:compile';
+    protected $signature = 'style:compile {name}';
 
     /**
      * The console command description.
@@ -71,47 +72,20 @@ class CompileCommand extends Command
      */
     public function handle()
     {
-        $paths = $this->getPathsToCompile();
+        $style = new Style($this->argument('name'));
+        $style->compile();
 
-        foreach ($paths as $namespace => $namespacePaths) {
-            foreach ($namespacePaths as $path) {
-                $this->compileStylesInPath($path, $namespace);
-            }
-        }
-
-        if (!$this->compiler->hasChanges()) {
-            $this->line('No changes detected.');
-        }
-    }
-
-    public function getPathsToCompile()
-    {
-        $paths = ['' => $this->finder->getPaths()];
-
-        foreach ($this->finder->getHints() as $namespace => $namespacePaths) {
-            $paths[$namespace] = $namespacePaths;
-        }
-
-        return $paths;
-    }
-
-    public function compileStylesInPath(string $path, string $namespace = '')
-    {
-        $files = $this->files->allFiles($path);
-
-        foreach ($files as $file) {
-            if (!Str::endsWith($file, 'blade.php')) {
-                continue;
-            }
-
-            if (!$this->compiler->compile($file)) {
-                continue;
-            }
-
+        $compiledFiles = $style->getCompiled();
+        foreach ($compiledFiles as $file) {
             $lang = $this->compiler->getLangFromString($this->files->get($file));
             $view = get_view_name_from_path($file);
-
             $this->line("Compiled <info>{$lang}</info> in view <info>{$view}</info>.");
+        }
+
+        if (!$compiledFiles) {
+            $this->line('No changes detected.');
+        } else {
+            $this->info("Created css file in {$style->path}");
         }
     }
 }

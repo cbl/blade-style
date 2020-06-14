@@ -2,6 +2,7 @@
 
 namespace BladeStyle;
 
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\File;
 use BladeStyle\Compiler\CompilerInterface;
@@ -75,10 +76,41 @@ class StyleCompiler
     /**
      * Compile style.
      *
+     * @param string $path
+     * @return void
+     * 
+     * @throws \InvalidArgumentException
+     */
+    public function compile(string $path)
+    {
+        if (Str::endsWith($path, 'blade.php')) {
+            return $this->compileView($path);
+        }
+
+        throw new InvalidArgumentException("Could not compile file {$path}.");
+        //$lang = $path
+    }
+
+    /**
+     * Check if file can be compiled.
+     *
+     * @param string $path
+     * @return boolean
+     */
+    public function canBeCompiled($path)
+    {
+        return Str::endsWith($path, [
+            'blade.php'
+        ]);
+    }
+
+    /**
+     * Compile view.
+     *
      * @param string $viewPath
      * @return void
      */
-    public function compile(string $viewPath)
+    protected function compileView($viewPath)
     {
         $styleId = sha1($viewPath);
         $compiledPath = $this->getCompiledPath($styleId);
@@ -106,6 +138,19 @@ class StyleCompiler
         $this->setChanged($styleId);
 
         return true;
+    }
+
+    /**
+     * Get style id from path.
+     *
+     * @param string $path
+     * @return string
+     */
+    public function getStyleIdFromPath(string $path)
+    {
+        if (Str::endsWith($path, 'blade.php')) {
+            return sha1($path);
+        }
     }
 
     /**

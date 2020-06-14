@@ -104,9 +104,13 @@ class StyleLoader
      * @param array $vars
      * @return array
      */
-    public function getStyleTags()
+    public function getStyle($name)
     {
         $tags = [];
+
+        return new Style($name);
+        $style =
+            $config = config('styles.styles')[$name];
 
         if (config('app.debug')) {
             $debugStyles = File::get(__DIR__ . '/../styles/debug.css');

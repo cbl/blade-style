@@ -55,14 +55,14 @@ function handleResponse(response) {
 function shwoError(response) {
 	let element = document.getElementById('blade-style-error');
 	let wrapper = document.querySelector('#blade-style-error div');
-	wrapper.innerHTML = `<iframe src="compile-styles"></iframe>`;
+	wrapper.innerHTML = `<iframe src="compile-styles/`${styleName}`"></iframe>`;
 	element.style.display = 'block';
 }
 
 let errorMessage = '';
 
 function checkTime() {
-	let response = httpGet(`compile-styles`);
+	let response = httpGet(`compile-styles/`${styleName}``);
 	console.log(response.status);
 
 	if (response.status == 200) {

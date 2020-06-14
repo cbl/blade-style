@@ -3,6 +3,7 @@
 namespace BladeStyle\Directives;
 
 use Illuminate\Support\Facades\File;
+use InvalidArgumentException;
 
 class WatchStyles
 {
@@ -14,7 +15,7 @@ class WatchStyles
      */
     public function compile($expression)
     {
-        return $this->errorModal() . $this->watchScript();
+        return $this->errorModal() . $this->watchScript($expression);
     }
 
     /**
@@ -22,11 +23,15 @@ class WatchStyles
      *
      * @return string
      */
-    protected function watchScript()
+    protected function watchScript($expression)
     {
         $script = File::get(__DIR__ . '/../../scripts/watch.js');
 
-        return "<script>{$script}</script>";
+        if ($expression == '') {
+            throw new InvalidArgumentException('Missing style name for @watchStyles.');
+        }
+
+        return "<script>const styleName = '<?php echo {$expression}; ?>'\n{$script}</script>";
     }
 
     /**
