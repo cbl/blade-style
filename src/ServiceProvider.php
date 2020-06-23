@@ -21,6 +21,10 @@ class ServiceProvider extends LaravelServiceProvider
      */
     public function register()
     {
+        $this->registerPublishes();
+
+        $this->registerCssCompiler();
+
         $this->registerEngineResolver();
 
         $this->registerFactory();
@@ -41,19 +45,27 @@ class ServiceProvider extends LaravelServiceProvider
         Blade::component('styles', StylesComponent::class);
     }
 
+    /**
+     * Register style engine resolver.
+     *
+     * @return void
+     */
     protected function registerEngineResolver()
     {
         $this->app->singleton('style.engine.resolver', function ($app) {
             $resolver = new EngineResolver;
 
-            foreach (['css', 'sass'] as $compiler) {
-                $this->{'register' . ucfirst($compiler) . 'Compiler'}($resolver);
-            }
+            $this->registerCssEngine($resolver);
 
             return $resolver;
         });
     }
 
+    /**
+     * Register style factory.
+     *
+     * @return void
+     */
     public function registerFactory()
     {
         $this->app->singleton('style.factory', function ($app) {
@@ -65,27 +77,32 @@ class ServiceProvider extends LaravelServiceProvider
         $this->app->alias('style.factory', Factory::class);
     }
 
-    protected function registerCssCompiler($resolver)
+    /**
+     * Register css compiler.
+     *
+     * @return void
+     */
+    protected function registerCssCompiler()
+    {
+        $this->app->singleton('style.compiler.css', function () {
+            return new CssCompiler(
+                $this->app['files'],
+                $this->app['config']['style.compiled']
+            );
+        });
+    }
+
+    /**
+     * Register css compiler.
+     *
+     * @param \BladeStyle\Engines\EngineResolver $resolver
+     * @return void
+     */
+    protected function registerCssEngine($resolver)
     {
         $resolver->register('css', function () {
-            $compiler = new CssCompiler($this->app['files'], $this->getCompiledPath());
-
-            return new CompilerEngine($compiler);
+            return new CompilerEngine($this->app['style.compiler.css']);
         });
-    }
-
-    protected function registerSassCompiler($resolver)
-    {
-        $resolver->register('sass', function () {
-            $compiler = new SassCompiler($this->app['files'], $this->getCompiledPath());
-
-            return new CompilerEngine($compiler);
-        });
-    }
-
-    public function getCompiledPath()
-    {
-        return storage_path('framework/styles');
     }
 
     /**
@@ -98,5 +115,14 @@ class ServiceProvider extends LaravelServiceProvider
         $this->publishes([
             __DIR__ . '/../storage/' => storage_path('framework/styles')
         ], 'storage');
+
+        $this->publishes([
+            __DIR__ . '/../config/style.php' => config_path('style.php')
+        ], 'config');
+
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/style.php',
+            'style'
+        );
     }
 }

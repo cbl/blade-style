@@ -10,7 +10,7 @@ class CssCompiler extends Compiler
      * @param string $style
      * @return void
      */
-    protected function compileString($style)
+    public function compileString($style)
     {
         return $style;
     }
