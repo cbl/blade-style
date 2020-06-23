@@ -23,8 +23,7 @@ development.
 
 With blade styles there is no need to run a compiler when working on your
 styles. Also, only the styles of required blade components are loaded. This
-saves you from loading large css files and the styles can be reduced to a
-minimum.
+saves you from loading large css files and the size can be reduced to a minimum.
 
 ## Compiler
 
@@ -35,7 +34,7 @@ compiler for `Less` or `Stylus`, you can do so using the `Sass` example.
 
 ## Installation
 
-The packet can be easily installed via composer.
+The package can be easily installed via composer.
 
 ```shell
 composer requrie cbl/blade-style
@@ -50,7 +49,7 @@ php artisan vendor:publish --provider=BladeStyle\ServiceProvider
 
 ## Loading Styles
 
-The blade component `x-styles` is replaced with the required styles, so it can
+The blade component `x-styles` is replaced with the required styles, so it may
 be placed in the head.
 
 ```php
@@ -63,7 +62,7 @@ be placed in the head.
 
 ## Basics
 
-Each blade view can contain exactly one `x-style` component. These styles can
+Each blade view can contain exactly one `x-style` component. Your styles can
 then be written inside the wrapper like so.
 
 ```php
@@ -105,7 +104,6 @@ node is not needed.
 
 Now you can use sass by specifying `sass` or `scss` as `lang` parameter like so.
 
-````php
 ```php
 <button class="btn">{{ $slot }}</button>
 
@@ -115,4 +113,4 @@ $height: 2rem;
     height: $height;
 }
 </x-style>
-````
+```
