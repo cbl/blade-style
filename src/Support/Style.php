@@ -2,12 +2,10 @@
 
 namespace BladeStyle\Support;
 
-use BladeStyle\StyleLoader;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \BladeStyle\StyleLoader
- * @see \BladeStyle\StyleCompiler
+ * @see \BladeStyle\Factory
  */
 class Style extends Facade
 {
@@ -18,6 +16,6 @@ class Style extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'blade.style';
+        return 'style.factory';
     }
 }

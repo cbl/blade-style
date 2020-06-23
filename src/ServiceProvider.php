@@ -2,19 +2,14 @@
 
 namespace BladeStyle;
 
-use BladeStyle\Directives\Styles;
+use BladeStyle\Factory;
 use BladeStyle\Compiler\CssCompiler;
-use BladeStyle\RouteServiceProvider;
-use Illuminate\Support\Facades\View;
-use BladeStyle\Compiler\LessCompiler;
 use BladeStyle\Compiler\SassCompiler;
 use Illuminate\Support\Facades\Blade;
-use BladeStyle\Directives\WatchStyles;
-use BladeStyle\Commands\CompileCommand;
-use BladeStyle\Commands\InstallCommand;
-use BladeStyle\Compiler\StylusCompiler;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Routing\CompiledRouteCollection;
+use BladeStyle\Engines\CompilerEngine;
+use BladeStyle\Engines\EngineResolver;
+use BladeStyle\Components\StyleComponent;
+use BladeStyle\Components\StylesComponent;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
 class ServiceProvider extends LaravelServiceProvider
@@ -26,30 +21,13 @@ class ServiceProvider extends LaravelServiceProvider
      */
     public function register()
     {
-        $this->app->register(RouteServiceProvider::class);
-        $this->registerSingletons();
-        $this->registerPublishes();
-        $this->registerCompiler();
-        $this->registerCommands();
+        $this->registerEngineResolver();
+
+        $this->registerFactory();
 
         $this->blade();
 
-        View::addNamespace('blade-style', __DIR__ . "/../views");
-    }
-
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-
-        return;
-        // Automaticly publish storage.
-        Artisan::call('vendor:publish', [
-            '--tag' => 'storage'
-        ]);
+        $this->app->register(ViewServiceProvider::class);
     }
 
     /**
@@ -60,53 +38,54 @@ class ServiceProvider extends LaravelServiceProvider
     public function blade()
     {
         Blade::component('style', StyleComponent::class);
-        Blade::directive('styles', function ($expression) {
-            return (new Styles)->compile($expression);
-        });
-        Blade::directive('watchStyles', function ($expression) {
-            return (new WatchStyles)->compile($expression);
-        });
+        Blade::component('styles', StylesComponent::class);
     }
 
-    /**
-     * Register the given commands.
-     *
-     * @return void
-     */
-    public function registerCommands()
+    protected function registerEngineResolver()
     {
-        $this->commands([
-            InstallCommand::class,
-            CompileCommand::class
-        ]);
-    }
+        $this->app->singleton('style.engine.resolver', function ($app) {
+            $resolver = new EngineResolver;
 
-    /**
-     * Register singletons.
-     *
-     * @return void
-     */
-    public function registerSingletons()
-    {
-        $this->app->singleton('blade.style.compiler', StyleCompiler::class);
-        $this->app->singleton('blade.style', function () {
-            return new StyleLoader($this->app['blade.style.compiler']);
+            foreach (['css', 'sass'] as $compiler) {
+                $this->{'register' . ucfirst($compiler) . 'Compiler'}($resolver);
+            }
+
+            return $resolver;
         });
     }
 
-    /**
-     * Register style compiler.
-     *
-     * @return void
-     */
-    public function registerCompiler()
+    public function registerFactory()
     {
-        $compiler = $this->app['blade.style.compiler'];
-        $compiler->registerCompiler('css', new CssCompiler);
-        $compiler->registerCompiler('sass', new SassCompiler);
-        $compiler->registerCompiler('scss', new SassCompiler);
-        $compiler->registerCompiler('less', new LessCompiler);
-        $compiler->registerCompiler('stylus', new StylusCompiler);
+        $this->app->singleton('style.factory', function ($app) {
+            $resolver = $app['style.engine.resolver'];
+
+            return new Factory($resolver);
+        });
+
+        $this->app->alias('style.factory', Factory::class);
+    }
+
+    protected function registerCssCompiler($resolver)
+    {
+        $resolver->register('css', function () {
+            $compiler = new CssCompiler($this->app['files'], $this->getCompiledPath());
+
+            return new CompilerEngine($compiler);
+        });
+    }
+
+    protected function registerSassCompiler($resolver)
+    {
+        $resolver->register('sass', function () {
+            $compiler = new SassCompiler($this->app['files'], $this->getCompiledPath());
+
+            return new CompilerEngine($compiler);
+        });
+    }
+
+    public function getCompiledPath()
+    {
+        return storage_path('framework/styles');
     }
 
     /**
@@ -119,14 +98,5 @@ class ServiceProvider extends LaravelServiceProvider
         $this->publishes([
             __DIR__ . '/../storage/' => storage_path('framework/styles')
         ], 'storage');
-
-        $this->publishes([
-            __DIR__ . '/../config' => config_path(),
-        ], 'config');
-
-        $this->mergeConfigFrom(
-            __DIR__ . '/../config/styles.php',
-            'styles'
-        );
     }
 }

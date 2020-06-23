@@ -2,19 +2,16 @@
 
 namespace BladeStyle\Compiler;
 
-use Illuminate\Support\Facades\File;
-
-class CssCompiler extends CompileAdapter
+class CssCompiler extends Compiler
 {
     /**
-     * Compile style string and store it to the given path.
+     * Compile style string.
      *
      * @param string $style
-     * @param string $path
      * @return void
      */
-    public function compile(string $style, string $path)
+    protected function compileString($style)
     {
-        File::put($path, $style);
+        return $style;
     }
 }
