@@ -16,26 +16,34 @@ class StyleComponent extends Component
      */
     public $lang;
 
+    /**
+     * Style factory.
+     *
+     * @var \BladeStyle\Factory
+     */
     public $style;
-
-    public $factory;
 
     /**
      * Create new StyleComponent instance.
      *
+     * @param Factory $factory
      * @param string $lang
      * @return void
      */
-    public function __construct(Factory $factory, $lang = 'css')
+    public function __construct(Factory $style, $lang = 'css')
     {
         $this->lang = $lang;
-        $this->factory = $factory;
+        $this->style = $style;
 
-        $this->setStyle();
-        $this->addStyleToStack();
+        $this->makeStyle();
     }
 
-    public function setStyle()
+    /**
+     * Set style instance.
+     *
+     * @return void
+     */
+    protected function makeStyle()
     {
         $path = $this->getPathFromTrace();
 
@@ -43,14 +51,16 @@ class StyleComponent extends Component
             return;
         }
 
-        $this->style = $this->factory->make($path);
+        // Making a style instance. The factory will add the style to the stack 
+        // so it can be included.
+        $this->style->make($path);
     }
 
-    protected function addStyleToStack()
-    {
-        //
-    }
-
+    /**
+     * Get path from trace.
+     *
+     * @return void
+     */
     protected function getPathFromTrace()
     {
         foreach (debug_backtrace() as $trace) {
@@ -66,6 +76,12 @@ class StyleComponent extends Component
         }
     }
 
+    /**
+     * Get view path from compiled instance.
+     *
+     * @param string $compiled
+     * @return string
+     */
     protected function getPathFromCompiled($compiled)
     {
         return trim(Str::between(File::get($compiled), '/**PATH', 'ENDPATH**/'));

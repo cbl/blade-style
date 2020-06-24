@@ -1,13 +1,10 @@
 <?php
 
-namespace BladeStyle\Engines;
+namespace BladeStyle\Engines\Concerns;
 
-use BladeStyle\Components\StylesComponent;
-use Illuminate\Support\Str;
 use BladeStyle\Support\Style;
-use Facade\Ignition\Views\Engines\CompilerEngine;
 
-class StyleCompilerEngine extends CompilerEngine
+trait ManagesViewCompilerEngine
 {
     /**
      * Get the evaluated contents of the view.

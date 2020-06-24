@@ -2,10 +2,11 @@
 
 namespace BladeStyle;
 
-use BladeStyle\Components\StylesComponent;
+use BladeStyle\Style;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use BladeStyle\Engines\EngineResolver;
+use BladeStyle\Components\StylesComponent;
 
 class Factory
 {
@@ -80,7 +81,6 @@ class Factory
     /**
      * Render stack.
      *
-     * @param boolean $flat
      * @return string
      */
     public function render()
@@ -103,22 +103,6 @@ class Factory
     public function isRendered($path)
     {
         return array_key_exists($path, $this->rendered);
-    }
-
-    /**
-     * Wrap style when not flat.
-     *
-     * @param string $style
-     * @param boolean $flat
-     * @return string
-     */
-    protected function wrap(string $style, $flat = false)
-    {
-        if (trim($style) == '') {
-            return;
-        }
-
-        return "<style>{$style}</style>";
     }
 
     /**
@@ -155,10 +139,9 @@ class Factory
      * Include styles to x-styles component.
      *
      * @param string $result
-     * @param boolean $flat
      * @return string
      */
-    public function include(string $result, $flat = false)
+    public function include(string $result)
     {
         if (!$this->includesStyles($result)) {
             return $result;
@@ -167,7 +150,7 @@ class Factory
         $current = Str::between($result, StylesComponent::PLACEHOLDER_OPEN, StylesComponent::PLACEHOLDER_CLOSE);
 
         $search = StylesComponent::PLACEHOLDER_OPEN . $current . StylesComponent::PLACEHOLDER_CLOSE;
-        $replace = StylesComponent::PLACEHOLDER_OPEN . $this->render($flat) . StylesComponent::PLACEHOLDER_CLOSE;
+        $replace = StylesComponent::PLACEHOLDER_OPEN . $this->render() . StylesComponent::PLACEHOLDER_CLOSE;
 
         return Str::replaceFirst($search, $replace, $result);
     }
