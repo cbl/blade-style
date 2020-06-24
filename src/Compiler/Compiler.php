@@ -60,9 +60,11 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
      */
     public function compile($path)
     {
-        // Minify compiled css.
+        if (!$raw = $this->getRaw($path)) {
+            return;
+        }
 
-        $css = $this->compileString($this->getRaw($path));
+        $css = $this->compileString($raw);
 
         if (config('style.minify')) {
             $css = $this->engine->minify($css);

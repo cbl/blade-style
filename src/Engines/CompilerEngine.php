@@ -2,19 +2,26 @@
 
 namespace BladeStyle\Engines;
 
+use BladeStyle\Compiler\Compiler;
 use Illuminate\Support\Facades\File;
 use BladeStyle\Contracts\StyleEngine;
-use Illuminate\View\Compilers\CompilerInterface;
 
 class CompilerEngine implements StyleEngine
 {
     /**
+     * Style Compiler.
+     *
+     * @var \Illuminate\View\Compilers\CompilerInterface
+     */
+    protected $compiler;
+
+    /**
      * Create a new Blade view engine instance.
      *
-     * @param  \BladeStyle\StyleCompiler  $compiler
+     * @param  \BladeStyle\Compiler\Compiler  $compiler
      * @return void
      */
-    public function __construct(CompilerInterface $compiler)
+    public function __construct(Compiler $compiler)
     {
         $this->compiler = $compiler;
     }
@@ -32,5 +39,15 @@ class CompilerEngine implements StyleEngine
         }
 
         return File::get($this->compiler->getCompiledPath($path));
+    }
+
+    /**
+     * Get compiler.
+     *
+     * @return \BladeStyle\Compiler\Compiler
+     */
+    public function getCompiler()
+    {
+        return $this->compiler;
     }
 }

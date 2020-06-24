@@ -10,6 +10,7 @@ use BladeStyle\Engines\EngineResolver;
 use BladeStyle\Engines\MinifierEngine;
 use BladeStyle\Minifier\MullieMinifier;
 use BladeStyle\Components\StyleComponent;
+use BladeStyle\Commands\StyleCacheCommand;
 use BladeStyle\Commands\StyleClearCommand;
 use BladeStyle\Components\StylesComponent;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
@@ -34,6 +35,8 @@ class ServiceProvider extends LaravelServiceProvider
         $this->registerEngineResolver();
 
         $this->registerStyleClearCommand();
+
+        $this->registerStyleCacheCommand();
 
         $this->registerFactory();
 
@@ -150,6 +153,20 @@ class ServiceProvider extends LaravelServiceProvider
         });
 
         $this->commands(['command.style.clear']);
+    }
+
+    /**
+     * Register the command.
+     *
+     * @return void
+     */
+    protected function registerStyleCacheCommand()
+    {
+        $this->app->singleton('command.style.cache', function ($app) {
+            return new StyleCacheCommand($app['style.factory']);
+        });
+
+        $this->commands(['command.style.cache']);
     }
 
     /**

@@ -47,7 +47,7 @@ class Factory
      * @param string $path
      * @return Style
      */
-    public function make($path, $lang = null)
+    public function make(string $path, $lang = null)
     {
         if ($this->inStack($path)) {
             return $this->stack[$path];
@@ -73,7 +73,7 @@ class Factory
      * @param string $path
      * @return boolean
      */
-    public function inStack($path)
+    public function inStack(string $path)
     {
         return array_key_exists($path, $this->stack);
     }

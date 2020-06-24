@@ -3,7 +3,7 @@
 namespace BladeStyle;
 
 use Illuminate\View\View;
-use BladeStyle\Contracts\StyleEngine;
+use BladeStyle\Engines\CompilerEngine;
 use BladeStyle\Contracts\StyleCompiler;
 
 class Style
@@ -18,18 +18,17 @@ class Style
     /**
      * Style engine.
      *
-     * @var \BladeStyle\Contracts\StyleEngine
+     * @var \BladeStyle\Engines\CompilerEngine
      */
     protected $engine;
 
     /**
      * Create new style instance.
      *
-     * @param View $view
-     * @param string $name
-     * @param StyleCompiler $compiler
+     * @param string $path
+     * @param \BladeStyle\Engines\CompilerEngine $compiler
      */
-    public function __construct($path, StyleEngine $engine)
+    public function __construct($path, CompilerEngine $engine)
     {
         $this->path = $path;
         $this->engine = $engine;
@@ -43,5 +42,15 @@ class Style
     public function render()
     {
         return $this->engine->get($this->path);
+    }
+
+    /**
+     * Get compiler.
+     *
+     * @return \BladeStyle\Compiler\Compiler
+     */
+    public function getCompiler()
+    {
+        return $this->engine->getCompiler();
     }
 }
