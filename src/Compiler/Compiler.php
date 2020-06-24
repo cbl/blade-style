@@ -2,11 +2,20 @@
 
 namespace BladeStyle\Compiler;
 
-use Illuminate\View\Compilers\Compiler as ViewCompiler;
+use BladeStyle\Engines\MinifierEngine;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Compilers\CompilerInterface;
+use Illuminate\View\Compilers\Compiler as ViewCompiler;
 
 abstract class Compiler extends ViewCompiler implements CompilerInterface
 {
+    /**
+     * Minifier engine.
+     *
+     * @var \BladeStyle\Engines\MinifierEngine
+     */
+    protected $engine;
+
     /**
      * Compile style string.
      *
@@ -16,6 +25,23 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
     abstract public function compileString($string);
 
     /**
+     * Create a new compiler instance.
+     *
+     * @param  \BladeStyle\Engines\MinifierEngine $engine
+     * @param  \Illuminate\Filesystem\Filesystem  $files
+     * @param  string  $cachePath
+     * @return void
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function __construct(MinifierEngine $engine, Filesystem $files, $cachePath)
+    {
+        parent::__construct($files, $cachePath);
+
+        $this->engine = $engine;
+    }
+
+    /**
      * Compile the style at the given path.
      *
      * @param  string  $path
@@ -23,14 +49,14 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
      */
     public function compile($path)
     {
-        $contents = $this->compileString(
-            $this->getRaw($path)
+        // Minify compiled css.
+        $css = $this->engine->minify(
+            $this->compileString($this->getRaw($path))
         );
-
 
         $this->files->put(
             $this->getCompiledPath($path),
-            $contents
+            $css
         );
     }
 

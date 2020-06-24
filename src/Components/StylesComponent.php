@@ -6,7 +6,8 @@ use Illuminate\View\Component;
 
 class StylesComponent extends Component
 {
-    const PLACEHOLDER = '<blade-styles></blade-styles>';
+    const PLACEHOLDER_OPEN = '<!-- START BLADE STYLES -->';
+    const PLACEHOLDER_CLOSE = '<!-- END BLADE STYLES -->';
 
     /**
      * Get the view / contents that represent the component.
@@ -15,6 +16,6 @@ class StylesComponent extends Component
      */
     public function render()
     {
-        return static::PLACEHOLDER;
+        return static::PLACEHOLDER_OPEN . static::PLACEHOLDER_CLOSE;
     }
 }

@@ -4,10 +4,11 @@ namespace BladeStyle;
 
 use BladeStyle\Factory;
 use BladeStyle\Compiler\CssCompiler;
-use BladeStyle\Compiler\SassCompiler;
+use BladeStyle\Engines\MinifierEngine;
 use Illuminate\Support\Facades\Blade;
 use BladeStyle\Engines\CompilerEngine;
 use BladeStyle\Engines\EngineResolver;
+use BladeStyle\Minifier\MullieMinifier;
 use BladeStyle\Components\StyleComponent;
 use BladeStyle\Components\StylesComponent;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
@@ -23,26 +24,54 @@ class ServiceProvider extends LaravelServiceProvider
     {
         $this->registerPublishes();
 
+        $this->registerMinifier();
+
+        $this->registerMinifierEngine();
+
         $this->registerCssCompiler();
 
         $this->registerEngineResolver();
 
         $this->registerFactory();
 
-        $this->blade();
+        $this->registerBladeComponents();
 
         $this->app->register(ViewServiceProvider::class);
     }
 
     /**
-     * Extend blade.
+     * Register blade components.
      *
      * @return void
      */
-    public function blade()
+    public function registerBladeComponents()
     {
         Blade::component('style', StyleComponent::class);
         Blade::component('styles', StylesComponent::class);
+    }
+
+    /**
+     * Register minifier.
+     *
+     * @return void
+     */
+    protected function registerMinifier()
+    {
+        $this->app->singleton('style.minifier.mullie', function ($app) {
+            return new MullieMinifier;
+        });
+    }
+
+    /**
+     * Register minifier engine.
+     *
+     * @return void
+     */
+    protected function registerMinifierEngine()
+    {
+        $this->app->singleton('style.engine.minifier', function ($app) {
+            return new MinifierEngine($app['style.minifier.mullie']);
+        });
     }
 
     /**
@@ -86,8 +115,9 @@ class ServiceProvider extends LaravelServiceProvider
     {
         $this->app->singleton('style.compiler.css', function () {
             return new CssCompiler(
+                $this->app['style.engine.minifier'],
                 $this->app['files'],
-                $this->app['config']['style.compiled']
+                $this->app['config']['style.compiled'],
             );
         });
     }

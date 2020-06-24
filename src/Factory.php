@@ -2,6 +2,8 @@
 
 namespace BladeStyle;
 
+use BladeStyle\Components\StylesComponent;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use BladeStyle\Engines\EngineResolver;
 
@@ -78,23 +80,18 @@ class Factory
     /**
      * Render stack.
      *
+     * @param boolean $flat
      * @return string
      */
     public function render()
     {
-        $styles = '';
+        $styles = "";
 
         foreach ($this->stack as $path => $style) {
-            if ($this->isRendered($path)) {
-                continue;
-            }
-
-            $styles .= $this->wrap($style->render());
-
-            $this->rendered[] = $path;
+            $styles .= $style->render();
         }
 
-        return $styles;
+        return "\n<style>{$styles}</style>\n";
     }
 
     /**
@@ -122,6 +119,57 @@ class Factory
         }
 
         return "<style>{$style}</style>";
+    }
+
+    /**
+     * Determine wether new styles are discovered that can be included.
+     *
+     * @return boolean
+     */
+    public function hasNew()
+    {
+        foreach ($this->stack as $path => $style) {
+            if (!$this->isRendered($path)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine wether string includes styles.
+     *
+     * @param string $result 
+     * @return void
+     */
+    public function includesStyles(string $result)
+    {
+        return Str::contains($result, [
+            StylesComponent::PLACEHOLDER_OPEN,
+            StylesComponent::PLACEHOLDER_CLOSE,
+        ]);
+    }
+
+    /**
+     * Include styles to x-styles component.
+     *
+     * @param string $result
+     * @param boolean $flat
+     * @return string
+     */
+    public function include(string $result, $flat = false)
+    {
+        if (!$this->includesStyles($result)) {
+            return $result;
+        }
+
+        $current = Str::between($result, StylesComponent::PLACEHOLDER_OPEN, StylesComponent::PLACEHOLDER_CLOSE);
+
+        $search = StylesComponent::PLACEHOLDER_OPEN . $current . StylesComponent::PLACEHOLDER_CLOSE;
+        $replace = StylesComponent::PLACEHOLDER_OPEN . $this->render($flat) . StylesComponent::PLACEHOLDER_CLOSE;
+
+        return Str::replaceFirst($search, $replace, $result);
     }
 
     /**

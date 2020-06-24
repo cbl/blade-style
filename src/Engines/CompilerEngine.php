@@ -2,7 +2,6 @@
 
 namespace BladeStyle\Engines;
 
-use BladeStyle\StyleCompiler;
 use Illuminate\Support\Facades\File;
 use BladeStyle\Contracts\StyleEngine;
 use Illuminate\View\Compilers\CompilerInterface;

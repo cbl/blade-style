@@ -1,6 +1,6 @@
 # Blade Style
 
-A package to easily add styles to your blade views.
+A package to easily add styles to your blade components.
 
 ```php
 <button class="btn">{{ $slot }}</button>
@@ -22,13 +22,14 @@ This design pattern is a considerable simplification of the workflow in frontend
 development.
 
 With blade styles there is no need to run a compiler when working on your
-styles. Also, only the styles of required blade components are loaded. This
+styles. Also, only the styles of required blade components are included. This
 saves you from loading large css files and the size can be reduced to a minimum.
 
 ## Compiler
 
 Currently there is a `Sass` compiler for blade styles. If you want to build a
-compiler for `Less` or `Stylus`, you can do so using the `Sass` example.
+compiler for `Less` or `Stylus`, you can do so using the `Sass` package as an
+example.
 
 -   [Blade Style Sass](https://github.com/cbl/blade-style-sass)
 
@@ -40,17 +41,17 @@ The package can be easily installed via composer.
 composer requrie cbl/blade-style
 ```
 
-Now you only have to save the storage where the styles are compiled and publish
-the config.
+now the necessary assets must be published. This includes the style.php config
+and the storage folder where the compiled styles are stored.
 
 ```shell
 php artisan vendor:publish --provider=BladeStyle\ServiceProvider
 ```
 
-## Loading Styles
+## Include Styles
 
-The blade component `x-styles` is replaced with the required styles, so it may
-be placed in the head.
+The blade component `x-styles` includes all required styles, so it may be placed
+in the head.
 
 ```php
 <head>
@@ -76,7 +77,7 @@ then be written inside the wrapper like so.
 </x-style>
 ```
 
-You can build reusable blade components so easily:
+You can build reusable blade components:
 
 ```php
 <button class="btn">{{ $slot }}</button>
@@ -102,7 +103,7 @@ composer require cbl/blade-style-sass
 The sass compiler uses [scssphp](https://github.com/scssphp/scssphp) that means
 node is not needed.
 
-Now you can use sass by specifying `sass` or `scss` as `lang` parameter like so.
+Now you can use sass by specifying `sass` or `scss` as `lang` attribute like so.
 
 ```php
 <button class="btn">{{ $slot }}</button>

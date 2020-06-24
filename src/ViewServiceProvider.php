@@ -3,18 +3,24 @@
 namespace BladeStyle;
 
 use Illuminate\Support\ServiceProvider;
-use BladeStyle\Engines\BladeCompilerEngine;
+use BladeStyle\Engines\StyleCompilerEngine;
 
 class ViewServiceProvider extends ServiceProvider
 {
+    /**
+     * Register application services.
+     *
+     * @return void
+     */
     public function register()
     {
         $this->app->booted(function () {
             $this->registerStyleEngine($this->app['view.engine.resolver']);
         });
     }
+
     /**
-     * Register the Style engine implementation.
+     * Register the style compiler engine implementation.
      *
      * @param  \Illuminate\View\Engines\EngineResolver  $resolver
      * @return void
@@ -22,7 +28,7 @@ class ViewServiceProvider extends ServiceProvider
     public function registerStyleEngine($resolver)
     {
         $resolver->register('blade', function () {
-            return new BladeCompilerEngine($this->app['blade.compiler']);
+            return new StyleCompilerEngine($this->app['blade.compiler']);
         });
     }
 }
