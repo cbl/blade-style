@@ -92,7 +92,16 @@ You can build reusable blade components:
 </x-style>
 ```
 
-## Clear Cache
+## Optimizing Styles
+
+Blade styles share the same behavior as Views. As suggested in the
+[View documentation](https://laravel.com/docs/7.x/views#optimizing-views), the
+`style:cache` command can be added to your deployment workflow to ensure that
+all styles are compiled and thus improve performance.
+
+```shell
+php artisan style:cache
+```
 
 You may use the `style:clear` command to clear the style cache:
 
