@@ -92,6 +92,14 @@ You can build reusable blade components:
 </x-style>
 ```
 
+## Clear Cache
+
+You may use the `style:clear` command to clear the style cache:
+
+```shell
+php artisan style:clear
+```
+
 ## Sass
 
 To use sass in `x-style` components you must first install the compiler using

@@ -4,12 +4,13 @@ namespace BladeStyle;
 
 use BladeStyle\Factory;
 use BladeStyle\Compiler\CssCompiler;
-use BladeStyle\Engines\MinifierEngine;
 use Illuminate\Support\Facades\Blade;
 use BladeStyle\Engines\CompilerEngine;
 use BladeStyle\Engines\EngineResolver;
+use BladeStyle\Engines\MinifierEngine;
 use BladeStyle\Minifier\MullieMinifier;
 use BladeStyle\Components\StyleComponent;
+use BladeStyle\Commands\StyleClearCommand;
 use BladeStyle\Components\StylesComponent;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
@@ -31,6 +32,8 @@ class ServiceProvider extends LaravelServiceProvider
         $this->registerCssCompiler();
 
         $this->registerEngineResolver();
+
+        $this->registerStyleClearCommand();
 
         $this->registerFactory();
 
@@ -133,6 +136,20 @@ class ServiceProvider extends LaravelServiceProvider
         $resolver->register('css', function () {
             return new CompilerEngine($this->app['style.compiler.css']);
         });
+    }
+
+    /**
+     * Register the command.
+     *
+     * @return void
+     */
+    protected function registerStyleClearCommand()
+    {
+        $this->app->singleton('command.style.clear', function ($app) {
+            return new StyleClearCommand($app['files']);
+        });
+
+        $this->commands(['command.style.clear']);
     }
 
     /**
