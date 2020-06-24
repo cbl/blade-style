@@ -1,6 +1,7 @@
 # Blade Style
 
-A package to easily add styles to your blade components.
+A package to easily minify styles and make use of sass, less, etc in your blade
+components.
 
 ```php
 <button class="btn">{{ $slot }}</button>
