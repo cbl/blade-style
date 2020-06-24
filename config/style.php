@@ -7,7 +7,7 @@ return [
     | Minify Styles
     |--------------------------------------------------------------------------
     |
-    | This option determines wetther the compiled css string should be stored 
+    | This option determines wether the compiled css string should be stored 
     | minified. It is highly recommended to do so. However you are free to 
     | disable minifying your styles. 
     |
