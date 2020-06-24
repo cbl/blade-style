@@ -45,7 +45,7 @@ now the necessary assets must be published. This includes the style.php config
 and the storage folder where the compiled styles are stored.
 
 ```shell
-php artisan vendor:publish --provider=BladeStyle\ServiceProvider
+php artisan vendor:publish --provider="BladeStyle\ServiceProvider"
 ```
 
 ## Include Styles
@@ -61,7 +61,7 @@ in the head.
 </head>
 ```
 
-## Basics
+## Usage
 
 Each blade view can contain exactly one `x-style` component. Your styles can
 then be written inside the wrapper like so.
