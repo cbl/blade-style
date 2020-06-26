@@ -27,15 +27,12 @@ class ServiceProvider extends LaravelServiceProvider
         $this->registerPublishes();
 
         $this->registerMinifier();
-
         $this->registerMinifierEngine();
 
-        $this->registerCssCompiler();
-
+        $this->registerCompiler();
         $this->registerEngineResolver();
 
         $this->registerStyleClearCommand();
-
         $this->registerStyleCacheCommand();
 
         $this->registerFactory();
@@ -90,7 +87,11 @@ class ServiceProvider extends LaravelServiceProvider
         $this->app->singleton('style.engine.resolver', function ($app) {
             $resolver = new EngineResolver;
 
-            $this->registerCssEngine($resolver);
+            foreach (config('style.compiler') as $binding => $abstracts) {
+                foreach ($abstracts as $abstract) {
+                    $this->registerCompilerEngine($resolver, $binding, $abstract);
+                }
+            }
 
             return $resolver;
         });
@@ -113,31 +114,35 @@ class ServiceProvider extends LaravelServiceProvider
     }
 
     /**
-     * Register css compiler.
+     * Register style compiler.
      *
      * @return void
      */
-    protected function registerCssCompiler()
+    protected function registerCompiler()
     {
-        $this->app->singleton('style.compiler.css', function () {
-            return new CssCompiler(
-                $this->app['style.engine.minifier'],
-                $this->app['files'],
-                $this->app['config']['style.compiled'],
-            );
-        });
+        foreach (config('style.compiler') as $compiler => $abstracts) {
+            $this->app->singleton($compiler, function () use ($compiler) {
+                return new $compiler(
+                    $this->app['style.engine.minifier'],
+                    $this->app['files'],
+                    $this->app['config']['style.compiled'],
+                );
+            });
+        }
     }
 
     /**
-     * Register css compiler.
+     * Register style compiler.
      *
      * @param \BladeStyle\Engines\EngineResolver $resolver
+     * @param string $binding
+     * @param string $abstract
      * @return void
      */
-    protected function registerCssEngine($resolver)
+    protected function registerCompilerEngine($resolver, $binding, $abstract)
     {
-        $resolver->register('css', function () {
-            return new CompilerEngine($this->app['style.compiler.css']);
+        $resolver->register($abstract, function () use ($binding) {
+            return new CompilerEngine($this->app[$binding]);
         });
     }
 

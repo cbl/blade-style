@@ -33,4 +33,25 @@ return [
         realpath(storage_path('framework/styles'))
     ),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Style Compiler
+    |--------------------------------------------------------------------------
+    |
+    | Style compilers make it possible to use css extensions like Sass, Less or 
+    | Stylus in Blade. The registered compilers can be activated with the "lang" 
+    | attribute in your x-style tag, like so: '<x-style lang="scss">'
+    |
+    */
+
+    'compiler' => [
+        BladeStyle\Compiler\CssCompiler::class => [
+            'css'
+        ],
+        BladeStyle\Sass\SassCompiler::class => [
+            'sass',
+            'scss'
+        ]
+    ],
+
 ];
