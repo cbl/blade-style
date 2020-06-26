@@ -54,4 +54,20 @@ return [
         ]
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Style Compiler
+    |--------------------------------------------------------------------------
+    |
+    | The default lang specifies which css language compiler is used if no other 
+    | is specified in the "lang" attribute of your x-style tag. 
+    |
+    | Note that it is advantageous for the readability of your code to specify 
+    | the compiler language in each x-style tag except when you are using plain 
+    | css.
+    |
+    */
+
+    'default_lang' => 'css'
+
 ];

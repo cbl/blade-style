@@ -27,12 +27,12 @@ class StyleComponent extends Component
      * Create new StyleComponent instance.
      *
      * @param Factory $factory
-     * @param string $lang
+     * @param string|null $lang
      * @return void
      */
-    public function __construct(Factory $style, $lang = 'css')
+    public function __construct(Factory $style, $lang = null)
     {
-        $this->lang = $lang;
+        $this->lang = $lang ?: config('style.default_lang');
         $this->style = $style;
 
         $this->makeStyle();

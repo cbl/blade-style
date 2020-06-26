@@ -165,6 +165,6 @@ class Factory
     {
         preg_match('/<x-style(?:\s+(?:lang=["\'](?P<lang>[^"\'<>]+)["\']|\w+=["\'][^"\'<>]+["\']))+/i', $string, $matches);
 
-        return $matches[1] ?? 'css';
+        return $matches[1] ?? config('style.default_lang');
     }
 }
