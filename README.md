@@ -122,14 +122,3 @@ The sass compiler uses [scssphp](https://github.com/scssphp/scssphp) that means
 node is not needed.
 
 Now you can use sass by specifying `sass` or `scss` as `lang` attribute like so.
-
-```php
-<button class="btn">{{ $slot }}</button>
-
-<x-style lang="sass">
-$height: 2rem;
-.btn{
-    height: $height;
-}
-</x-style>
-```

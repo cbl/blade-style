@@ -4,11 +4,13 @@ namespace BladeStyle;
 
 use BladeStyle\Factory;
 use BladeStyle\Compiler\CssCompiler;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Blade;
 use BladeStyle\Engines\CompilerEngine;
 use BladeStyle\Engines\EngineResolver;
 use BladeStyle\Engines\MinifierEngine;
 use BladeStyle\Minifier\MullieMinifier;
+use Illuminate\Support\Facades\Artisan;
 use BladeStyle\Components\StyleComponent;
 use BladeStyle\Commands\StyleCacheCommand;
 use BladeStyle\Commands\StyleClearCommand;
@@ -193,5 +195,9 @@ class ServiceProvider extends LaravelServiceProvider
             __DIR__ . '/../config/style.php',
             'style'
         );
+
+        if (!File::exists(storage_path('framework/styles'))) {
+            File::copyDirectory(__DIR__ . '/../storage/', storage_path('framework/styles'));
+        }
     }
 }
