@@ -28,6 +28,10 @@ class ServiceProvider extends LaravelServiceProvider
     {
         $this->registerPublishes();
 
+        if (!config('style.compiled') && $this->app->runningInConsole()) {
+            return;
+        }
+
         $this->registerMinifier();
         $this->registerMinifierEngine();
 
