@@ -2,8 +2,11 @@
 
 namespace BladeStyle\Compiler;
 
-use BladeStyle\Engines\MinifierEngine;
+use Throwable;
+use Illuminate\Support\Str;
 use Illuminate\Filesystem\Filesystem;
+use BladeStyle\Engines\MinifierEngine;
+use BladeStyle\Exceptions\StyleException;
 use Illuminate\View\Compilers\CompilerInterface;
 use Illuminate\View\Compilers\Compiler as ViewCompiler;
 
@@ -15,6 +18,13 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
      * @var \BladeStyle\Engines\MinifierEngine
      */
     protected $engine;
+
+    /**
+     * Path that is currently being compiled.
+     *
+     * @var string
+     */
+    protected $currentPath;
 
     /**
      * Compile style string.
@@ -64,6 +74,8 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
             return;
         }
 
+        $this->currentPath = $path;
+
         $css = $this->compileString($raw);
 
         if (config('style.minify')) {
@@ -74,6 +86,8 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
             $this->getCompiledPath($path),
             $css
         );
+
+        $this->currentPath = null;
     }
 
     /**
@@ -108,5 +122,42 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
         }
 
         return preg_replace('/<[^>]*>/', '', $matches[0]);
+    }
+
+    /**
+     * Get line where style starts.
+     *
+     * @return int
+     */
+    protected function getLineWhereStyleStarts(string $path)
+    {
+        foreach (file($path) as $line => $code) {
+            if (Str::startsWith($code, '<x-style')) {
+                return $line + 1;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * Throw more readable style exception.
+     *
+     * @param Throwable $e
+     * @return void
+     * 
+     * @throws \BladeStyle\Exceptions\StyleException
+     */
+    protected function throwStyleException(Throwable $e, int $line = 0)
+    {
+        $line = $this->getLineWhereStyleStarts($this->currentPath) + $line - ($line > 0 ? 1 : 0);
+
+        throw new StyleException(
+            $e->getMessage(),
+            $this->currentPath,
+            $line,
+            $e->getCode(),
+            $e
+        );
     }
 }

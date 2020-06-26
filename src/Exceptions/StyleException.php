@@ -4,6 +4,7 @@ namespace BladeStyle\Exceptions;
 
 use Exception;
 use InvalidArgumentException;
+use Illuminate\Support\Facades\File;
 
 class StyleException extends InvalidArgumentException
 {
@@ -11,15 +12,16 @@ class StyleException extends InvalidArgumentException
      * Create new FieldException instance.
      *
      * @param string $message
-     * @param array $options
+     * @param string $file
+     * @param int $line
      * @param integer $code
      * @param Exception $previous
      */
-    public function __construct($message = null, array $options = [], $code = 0, Exception $previous = null)
+    public function __construct($message = null, string $file = null, int $line = 0, $code = 0, Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
 
-        $this->file = $options['file'] ?? $this->file;
-        $this->line = $options['line'] ?? $this->line;
+        $this->file = $file === null ? $this->file : $file;
+        $this->line = $line;
     }
 }
