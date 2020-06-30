@@ -3,9 +3,9 @@
 namespace BladeStyle\Commands;
 
 use BladeStyle\Factory;
+use Illuminate\Foundation\Console\ViewCacheCommand;
 use Illuminate\Support\Collection;
 use Symfony\Component\Finder\SplFileInfo;
-use Illuminate\Foundation\Console\ViewCacheCommand;
 
 class StyleCacheCommand extends ViewCacheCommand
 {
@@ -61,7 +61,8 @@ class StyleCacheCommand extends ViewCacheCommand
     /**
      * Compile the given view files.
      *
-     * @param  \Illuminate\Support\Collection  $views
+     * @param \Illuminate\Support\Collection $views
+     *
      * @return void
      */
     protected function compileStyles(Collection $views)

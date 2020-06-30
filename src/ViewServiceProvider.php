@@ -2,10 +2,10 @@
 
 namespace BladeStyle;
 
+use BladeStyle\Engines\StyleLivewireViewCompilerEngine;
+use BladeStyle\Engines\StyleViewCompilerEngine;
 use Illuminate\Support\ServiceProvider;
 use Livewire\LivewireViewCompilerEngine;
-use BladeStyle\Engines\StyleViewCompilerEngine;
-use BladeStyle\Engines\StyleLivewireViewCompilerEngine;
 
 class ViewServiceProvider extends ServiceProvider
 {
@@ -24,7 +24,8 @@ class ViewServiceProvider extends ServiceProvider
     /**
      * Register the style compiler engine implementation.
      *
-     * @param  \Illuminate\View\Engines\EngineResolver  $resolver
+     * @param \Illuminate\View\Engines\EngineResolver $resolver
+     *
      * @return void
      */
     public function registerViewCompilerEngine($resolver)
@@ -41,7 +42,8 @@ class ViewServiceProvider extends ServiceProvider
     /**
      * Register the style compiler engine implementation for livewire.
      *
-     * @param  \Illuminate\View\Engines\EngineResolver  $resolver
+     * @param \Illuminate\View\Engines\EngineResolver $resolver
+     *
      * @return void
      */
     public function registerLivewireViewCompilerEngine($resolver)

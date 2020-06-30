@@ -2,16 +2,15 @@
 
 namespace BladeStyle;
 
-use BladeStyle\Style;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\File;
-use BladeStyle\Engines\EngineResolver;
 use BladeStyle\Components\StylesComponent;
+use BladeStyle\Engines\EngineResolver;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class Factory
 {
     /**
-     * Style stack
+     * Style stack.
      *
      * @var string
      */
@@ -45,6 +44,7 @@ class Factory
      * Create style instance from view.
      *
      * @param string $path
+     *
      * @return Style
      */
     public function make(string $path, $lang = null)
@@ -71,7 +71,8 @@ class Factory
      * Determine if style has been created.
      *
      * @param string $path
-     * @return boolean
+     *
+     * @return bool
      */
     public function inStack(string $path)
     {
@@ -85,7 +86,7 @@ class Factory
      */
     public function render()
     {
-        $styles = "";
+        $styles = '';
 
         foreach ($this->stack as $path => $style) {
             $styles .= $style->render();
@@ -98,7 +99,8 @@ class Factory
      * Determine if path has been rendered.
      *
      * @param string $path
-     * @return boolean
+     *
+     * @return bool
      */
     public function isRendered($path)
     {
@@ -108,7 +110,7 @@ class Factory
     /**
      * Determine wether new styles are discovered that can be included.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasNew()
     {
@@ -124,7 +126,8 @@ class Factory
     /**
      * Determine wether string includes styles.
      *
-     * @param string $result 
+     * @param string $result
+     *
      * @return void
      */
     public function includesStyles(string $result)
@@ -139,6 +142,7 @@ class Factory
      * Include styles to x-styles component.
      *
      * @param string $result
+     *
      * @return string
      */
     public function include(string $result)
@@ -149,8 +153,8 @@ class Factory
 
         $current = Str::between($result, StylesComponent::PLACEHOLDER_OPEN, StylesComponent::PLACEHOLDER_CLOSE);
 
-        $search = StylesComponent::PLACEHOLDER_OPEN . $current . StylesComponent::PLACEHOLDER_CLOSE;
-        $replace = StylesComponent::PLACEHOLDER_OPEN . $this->render() . StylesComponent::PLACEHOLDER_CLOSE;
+        $search = StylesComponent::PLACEHOLDER_OPEN.$current.StylesComponent::PLACEHOLDER_CLOSE;
+        $replace = StylesComponent::PLACEHOLDER_OPEN.$this->render().StylesComponent::PLACEHOLDER_CLOSE;
 
         return Str::replaceFirst($search, $replace, $result);
     }
@@ -159,6 +163,7 @@ class Factory
      * Extract lang from string.
      *
      * @param string $string
+     *
      * @return string
      */
     protected function extractLang(string $string)

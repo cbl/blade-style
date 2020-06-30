@@ -32,7 +32,8 @@ class StyleClearCommand extends Command
     /**
      * Create a new config clear command instance.
      *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
+     * @param \Illuminate\Filesystem\Filesystem $files
+     *
      * @return void
      */
     public function __construct(Filesystem $files)
@@ -45,9 +46,9 @@ class StyleClearCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return void
-     *
      * @throws \RuntimeException
+     *
+     * @return void
      */
     public function handle()
     {
