@@ -2,19 +2,16 @@
 
 namespace BladeStyle;
 
-use BladeStyle\Factory;
-use BladeStyle\Compiler\CssCompiler;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Blade;
+use BladeStyle\Commands\StyleCacheCommand;
+use BladeStyle\Commands\StyleClearCommand;
+use BladeStyle\Components\StyleComponent;
+use BladeStyle\Components\StylesComponent;
 use BladeStyle\Engines\CompilerEngine;
 use BladeStyle\Engines\EngineResolver;
 use BladeStyle\Engines\MinifierEngine;
 use BladeStyle\Minifier\MullieMinifier;
-use Illuminate\Support\Facades\Artisan;
-use BladeStyle\Components\StyleComponent;
-use BladeStyle\Commands\StyleCacheCommand;
-use BladeStyle\Commands\StyleClearCommand;
-use BladeStyle\Components\StylesComponent;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
 class ServiceProvider extends LaravelServiceProvider
@@ -67,7 +64,7 @@ class ServiceProvider extends LaravelServiceProvider
     protected function registerMinifier()
     {
         $this->app->singleton('style.minifier.mullie', function ($app) {
-            return new MullieMinifier;
+            return new MullieMinifier();
         });
     }
 
@@ -91,7 +88,7 @@ class ServiceProvider extends LaravelServiceProvider
     protected function registerEngineResolver()
     {
         $this->app->singleton('style.engine.resolver', function ($app) {
-            $resolver = new EngineResolver;
+            $resolver = new EngineResolver();
 
             foreach (config('style.compiler') as $binding => $abstracts) {
                 foreach ($abstracts as $abstract) {
@@ -141,8 +138,9 @@ class ServiceProvider extends LaravelServiceProvider
      * Register style compiler.
      *
      * @param \BladeStyle\Engines\EngineResolver $resolver
-     * @param string $binding
-     * @param string $abstract
+     * @param string                             $binding
+     * @param string                             $abstract
+     *
      * @return void
      */
     protected function registerCompilerEngine($resolver, $binding, $abstract)
@@ -188,20 +186,20 @@ class ServiceProvider extends LaravelServiceProvider
     public function registerPublishes()
     {
         $this->publishes([
-            __DIR__ . '/../storage/' => storage_path('framework/styles')
+            __DIR__.'/../storage/' => storage_path('framework/styles'),
         ], 'storage');
 
         $this->publishes([
-            __DIR__ . '/../config/style.php' => config_path('style.php')
+            __DIR__.'/../config/style.php' => config_path('style.php'),
         ], 'config');
 
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/style.php',
+            __DIR__.'/../config/style.php',
             'style'
         );
 
         if (!File::exists(storage_path('framework/styles'))) {
-            File::copyDirectory(__DIR__ . '/../storage/', storage_path('framework/styles'));
+            File::copyDirectory(__DIR__.'/../storage/', storage_path('framework/styles'));
         }
     }
 }

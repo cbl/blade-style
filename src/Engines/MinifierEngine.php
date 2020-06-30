@@ -27,6 +27,7 @@ class MinifierEngine
      * Set minifier.
      *
      * @param CssMinifier $minifier
+     *
      * @return void
      */
     public function setMinifier(CssMinifier $minifier)
@@ -35,7 +36,7 @@ class MinifierEngine
     }
 
     /**
-     * Minify css string
+     * Minify css string.
      *
      * @return string
      */

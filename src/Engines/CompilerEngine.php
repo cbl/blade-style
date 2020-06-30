@@ -3,8 +3,8 @@
 namespace BladeStyle\Engines;
 
 use BladeStyle\Compiler\Compiler;
-use Illuminate\Support\Facades\File;
 use BladeStyle\Contracts\StyleEngine;
+use Illuminate\Support\Facades\File;
 
 class CompilerEngine implements StyleEngine
 {
@@ -18,7 +18,8 @@ class CompilerEngine implements StyleEngine
     /**
      * Create a new Blade view engine instance.
      *
-     * @param  \BladeStyle\Compiler\Compiler  $compiler
+     * @param \BladeStyle\Compiler\Compiler $compiler
+     *
      * @return void
      */
     public function __construct(Compiler $compiler)
@@ -30,6 +31,7 @@ class CompilerEngine implements StyleEngine
      * Get compiled style from the given path.
      *
      * @param string $path
+     *
      * @return void
      */
     public function get(string $path)

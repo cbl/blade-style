@@ -16,6 +16,6 @@ class StylesComponent extends Component
      */
     public function render()
     {
-        return static::PLACEHOLDER_OPEN . static::PLACEHOLDER_CLOSE;
+        return static::PLACEHOLDER_OPEN.static::PLACEHOLDER_CLOSE;
     }
 }

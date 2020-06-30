@@ -3,9 +3,9 @@
 namespace BladeStyle\Components;
 
 use BladeStyle\Factory;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
-use Illuminate\Support\Facades\File;
 
 class StyleComponent extends Component
 {
@@ -26,8 +26,9 @@ class StyleComponent extends Component
     /**
      * Create new StyleComponent instance.
      *
-     * @param Factory $factory
+     * @param Factory     $factory
      * @param string|null $lang
+     *
      * @return void
      */
     public function __construct(Factory $style, $lang = null)
@@ -51,7 +52,7 @@ class StyleComponent extends Component
             return;
         }
 
-        // Making a style instance. The factory will add the style to the stack 
+        // Making a style instance. The factory will add the style to the stack
         // so it can be included.
         $this->style->make($path);
     }
@@ -80,6 +81,7 @@ class StyleComponent extends Component
      * Get view path from compiled instance.
      *
      * @param string $compiled
+     *
      * @return string
      */
     protected function getPathFromCompiled($compiled)

@@ -2,9 +2,7 @@
 
 namespace BladeStyle;
 
-use Illuminate\View\View;
 use BladeStyle\Engines\CompilerEngine;
-use BladeStyle\Contracts\StyleCompiler;
 
 class Style
 {
@@ -25,7 +23,7 @@ class Style
     /**
      * Create new style instance.
      *
-     * @param string $path
+     * @param string                             $path
      * @param \BladeStyle\Engines\CompilerEngine $compiler
      */
     public function __construct($path, CompilerEngine $engine)

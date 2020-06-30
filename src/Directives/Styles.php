@@ -5,9 +5,10 @@ namespace BladeStyle\Directives;
 class Styles
 {
     /**
-     * Compile @bladeStyles
+     * Compile @bladeStyles.
      *
      * @param string $expression
+     *
      * @return string
      */
     public function compile($expression)
