@@ -2,12 +2,11 @@
 
 namespace BladeStyle\Sass;
 
-use Illuminate\Support\Str;
 use BladeStyle\Compiler\Compiler;
-use Illuminate\Filesystem\Filesystem;
 use BladeStyle\Engines\MinifierEngine;
-use ScssPhp\ScssPhp\Compiler as ScssPhp;
 use BladeStyle\Exceptions\StyleException;
+use Illuminate\Filesystem\Filesystem;
+use ScssPhp\ScssPhp\Compiler as ScssPhp;
 use ScssPhp\ScssPhp\Exception\ParserException;
 
 class SassCompiler extends Compiler
@@ -22,9 +21,10 @@ class SassCompiler extends Compiler
     /**
      * Create a new compiler instance.
      *
-     * @param  \BladeStyle\Engines\MinifierEngine $engine
-     * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  string  $cachePath
+     * @param \BladeStyle\Engines\MinifierEngine $engine
+     * @param \Illuminate\Filesystem\Filesystem  $files
+     * @param string                             $cachePath
+     *
      * @return void
      */
     public function __construct(MinifierEngine $engine, Filesystem $files, $cachePath)
@@ -40,9 +40,10 @@ class SassCompiler extends Compiler
      * @see https://github.com/scssphp/scssphp
      *
      * @param string $style
-     * @return string
      *
      * @throws StyleException
+     *
+     * @return string
      */
     public function compileString($style)
     {
