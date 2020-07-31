@@ -200,6 +200,7 @@ class ServiceProvider extends LaravelServiceProvider
 
         if (!File::exists(storage_path('framework/styles'))) {
             File::copyDirectory(__DIR__.'/../storage/', storage_path('framework/styles'));
+            $this->app->bind('config', $this->app->make('config'));
         }
     }
 }
