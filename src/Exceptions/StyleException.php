@@ -3,15 +3,14 @@
 namespace BladeStyle\Exceptions;
 
 use Exception;
-use InvalidArgumentException;
+use ParseError;
 
-class StyleException implements SyntaxExceptionInterface
+class StyleException extends ParseError
 {
     /**
-     * Create new FieldException instance.
+     * Create new StyleException instance.
      *
      * @param string    $message
-     * @param string    $file
      * @param int       $line
      * @param int       $code
      * @param Exception $previous
@@ -20,7 +19,7 @@ class StyleException implements SyntaxExceptionInterface
     {
         parent::__construct($message, $code, $previous);
 
-        $this->file = $file === null ? $this->file : $file;
-        $this->line = $line;
+        //$this->file = $file === null ? $this->file : $file;
+        $this->line = $line ?: $this->line;
     }
 }

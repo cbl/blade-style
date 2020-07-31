@@ -26,8 +26,6 @@ class SassCompiler extends Compiler
      * @param  \Illuminate\Filesystem\Filesystem  $files
      * @param  string  $cachePath
      * @return void
-     *
-     * @throws \InvalidArgumentException
      */
     public function __construct(MinifierEngine $engine, Filesystem $files, $cachePath)
     {
@@ -38,18 +36,20 @@ class SassCompiler extends Compiler
 
     /**
      * Compile style string.
-     * 
+     *
      * @see https://github.com/scssphp/scssphp
      *
      * @param string $style
-     * @return void
+     * @return string
+     *
+     * @throws StyleException
      */
     public function compileString($style)
     {
         try {
             return $this->sass->compile($style);
         } catch (ParserException $e) {
-            throw new StyleException($e->getMessage(), Str::between($e->getMessage(), 'line ', ','));
+            throw new StyleException($e->getMessage());
         }
     }
 }
