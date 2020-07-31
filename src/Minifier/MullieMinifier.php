@@ -2,8 +2,8 @@
 
 namespace BladeStyle\Minifier;
 
-use MatthiasMullie\Minify;
 use BladeStyle\Contracts\CssMinifier;
+use MatthiasMullie\Minify;
 
 class MullieMinifier implements CssMinifier
 {
@@ -11,6 +11,7 @@ class MullieMinifier implements CssMinifier
      * Minify css string.
      *
      * @param string $css
+     *
      * @return string
      */
     public function minify(string $css)

@@ -2,13 +2,13 @@
 
 namespace BladeStyle\Compiler;
 
-use Throwable;
-use Illuminate\Support\Str;
-use Illuminate\Filesystem\Filesystem;
 use BladeStyle\Engines\MinifierEngine;
 use BladeStyle\Exceptions\StyleException;
-use Illuminate\View\Compilers\CompilerInterface;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use Illuminate\View\Compilers\Compiler as ViewCompiler;
+use Illuminate\View\Compilers\CompilerInterface;
+use Throwable;
 
 abstract class Compiler extends ViewCompiler implements CompilerInterface
 {
@@ -30,6 +30,7 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
      * Compile style string.
      *
      * @param string|null $string
+     *
      * @return string
      */
     abstract public function compileString($string);
@@ -37,12 +38,13 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
     /**
      * Create a new compiler instance.
      *
-     * @param  \BladeStyle\Engines\MinifierEngine $engine
-     * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  string  $cachePath
-     * @return void
+     * @param \BladeStyle\Engines\MinifierEngine $engine
+     * @param \Illuminate\Filesystem\Filesystem  $files
+     * @param string                             $cachePath
      *
      * @throws \InvalidArgumentException
+     *
+     * @return void
      */
     public function __construct(MinifierEngine $engine, Filesystem $files, $cachePath)
     {
@@ -54,18 +56,20 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
     /**
      * Get the path to the compiled version of a script.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return string
      */
     public function getCompiledPath($path)
     {
-        return $this->cachePath . '/' . sha1($path) . '.css';
+        return $this->cachePath.'/'.sha1($path).'.css';
     }
 
     /**
      * Compile the style at the given path.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return void
      */
     public function compile($path)
@@ -94,6 +98,7 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
      * Get raw style from path.
      *
      * @param string $path
+     *
      * @return string|null
      */
     public function getRaw($path)
@@ -107,6 +112,7 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
      * Get style from string.
      *
      * @param string|null $string
+     *
      * @return string
      */
     protected function getStyleFromString(string $string)
@@ -144,9 +150,10 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
      * Throw more readable style exception.
      *
      * @param Throwable $e
-     * @return void
-     * 
+     *
      * @throws \BladeStyle\Exceptions\StyleException
+     *
+     * @return void
      */
     protected function throwStyleException(Throwable $e, $path, int $line = 0)
     {
