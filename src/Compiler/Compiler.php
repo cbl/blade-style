@@ -74,9 +74,11 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
             return;
         }
 
-        $this->currentPath = $path;
-
-        $css = $this->compileString($raw);
+        try {
+            $css = $this->compileString($raw);
+        } catch (SyntaxExceptionInterface $e) {
+            $this->throwStyleException($e, $path, $e->getLine());
+        }
 
         if (config('style.minify')) {
             $css = $this->engine->minify($css);
@@ -86,8 +88,6 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
             $this->getCompiledPath($path),
             $css
         );
-
-        $this->currentPath = null;
     }
 
     /**
@@ -148,7 +148,7 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
      * 
      * @throws \BladeStyle\Exceptions\StyleException
      */
-    protected function throwStyleException(Throwable $e, int $line = 0)
+    protected function throwStyleException(Throwable $e, $path, int $line = 0)
     {
         $line = $this->getLineWhereStyleStarts($this->currentPath) + $line - ($line > 0 ? 1 : 0);
 
