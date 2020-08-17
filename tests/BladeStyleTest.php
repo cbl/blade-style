@@ -62,4 +62,13 @@ class BladeStyleTest extends TestCase
         $this->artisan('style:cache');
         $this->assertTrue(File::exists($path));
     }
+
+    /** @test */
+    public function it_compiles_sass()
+    {
+        $view = $this->getView('foo', '<x-style lang="sass">.a{.b{color:red;}}</x-style>');
+        $path = storage_path('framework/styles/'.sha1($view->getPath()).'.css');
+        $this->artisan('style:cache');
+        $this->assertSame('.a .b{color:red}', File::get($path));
+    }
 }
