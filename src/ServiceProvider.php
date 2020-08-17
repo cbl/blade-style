@@ -25,7 +25,7 @@ class ServiceProvider extends LaravelServiceProvider
     {
         $this->registerPublishes();
 
-        if (!config('style.compiled') && $this->app->runningInConsole()) {
+        if (! config('style.compiled') && $this->app->runningInConsole()) {
             return;
         }
 
@@ -137,10 +137,9 @@ class ServiceProvider extends LaravelServiceProvider
     /**
      * Register style compiler.
      *
-     * @param \BladeStyle\Engines\EngineResolver $resolver
-     * @param string                             $binding
-     * @param string                             $abstract
-     *
+     * @param  \BladeStyle\Engines\EngineResolver $resolver
+     * @param  string                             $binding
+     * @param  string                             $abstract
      * @return void
      */
     protected function registerCompilerEngine($resolver, $binding, $abstract)
@@ -193,10 +192,10 @@ class ServiceProvider extends LaravelServiceProvider
             __DIR__.'/../config/style.php' => config_path('style.php'),
         ], 'config');
 
-        if (!File::exists(storage_path('framework/styles'))) {
+        if (! File::exists(storage_path('framework/styles'))) {
             File::copyDirectory(__DIR__.'/../storage/', storage_path('framework/styles'));
         }
-        
+
         $this->mergeConfigFrom(
             __DIR__.'/../config/style.php',
             'style'

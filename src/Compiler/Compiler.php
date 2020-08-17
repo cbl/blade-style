@@ -29,8 +29,7 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
     /**
      * Compile style string.
      *
-     * @param string|null $string
-     *
+     * @param  string|null $string
      * @return string
      */
     abstract public function compileString($string);
@@ -38,13 +37,12 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
     /**
      * Create a new compiler instance.
      *
-     * @param \BladeStyle\Engines\MinifierEngine $engine
-     * @param \Illuminate\Filesystem\Filesystem  $files
-     * @param string                             $cachePath
+     * @param  \BladeStyle\Engines\MinifierEngine $engine
+     * @param  \Illuminate\Filesystem\Filesystem  $files
+     * @param  string                             $cachePath
+     * @return void
      *
      * @throws \InvalidArgumentException
-     *
-     * @return void
      */
     public function __construct(MinifierEngine $engine, Filesystem $files, $cachePath)
     {
@@ -56,8 +54,7 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
     /**
      * Get the path to the compiled version of a script.
      *
-     * @param string $path
-     *
+     * @param  string $path
      * @return string
      */
     public function getCompiledPath($path)
@@ -68,13 +65,12 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
     /**
      * Compile the style at the given path.
      *
-     * @param string $path
-     *
+     * @param  string $path
      * @return void
      */
     public function compile($path)
     {
-        if (!$raw = $this->getRaw($path)) {
+        if (! $raw = $this->getRaw($path)) {
             return;
         }
 
@@ -97,8 +93,7 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
     /**
      * Get raw style from path.
      *
-     * @param string $path
-     *
+     * @param  string      $path
      * @return string|null
      */
     public function getRaw($path)
@@ -111,8 +106,7 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
     /**
      * Get style from string.
      *
-     * @param string|null $string
-     *
+     * @param  string|null $string
      * @return string
      */
     protected function getStyleFromString(string $string)
@@ -149,22 +143,17 @@ abstract class Compiler extends ViewCompiler implements CompilerInterface
     /**
      * Throw more readable style exception.
      *
-     * @param Throwable $e
+     * @param  Throwable $e
+     * @return void
      *
      * @throws \BladeStyle\Exceptions\StyleException
-     *
-     * @return void
      */
     protected function throwStyleException(Throwable $e, $path, int $line = 0)
     {
         $line = $this->getLineWhereStyleStarts($this->currentPath) + $line - ($line > 0 ? 1 : 0);
 
         throw new StyleException(
-            $e->getMessage(),
-            $this->currentPath,
-            $line,
-            $e->getCode(),
-            $e
+            $e->getMessage(), $this->currentPath, $line, $e->getCode(), $e
         );
     }
 }

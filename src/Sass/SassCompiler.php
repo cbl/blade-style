@@ -39,11 +39,10 @@ class SassCompiler extends Compiler
      *
      * @see https://github.com/scssphp/scssphp
      *
-     * @param string $style
+     * @param  string $style
+     * @return string
      *
      * @throws StyleException
-     *
-     * @return string
      */
     public function compileString($style)
     {

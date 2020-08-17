@@ -43,8 +43,7 @@ class Factory
     /**
      * Create style instance from view.
      *
-     * @param string $path
-     *
+     * @param  string $path
      * @return Style
      */
     public function make(string $path, $lang = null)
@@ -53,7 +52,7 @@ class Factory
             return $this->stack[$path];
         }
 
-        if (!$lang) {
+        if (! $lang) {
             $lang = $this->extractLang(File::get($path));
         }
 
@@ -70,8 +69,7 @@ class Factory
     /**
      * Determine if style has been created.
      *
-     * @param string $path
-     *
+     * @param  string $path
      * @return bool
      */
     public function inStack(string $path)
@@ -98,8 +96,7 @@ class Factory
     /**
      * Determine if path has been rendered.
      *
-     * @param string $path
-     *
+     * @param  string $path
      * @return bool
      */
     public function isRendered($path)
@@ -115,7 +112,7 @@ class Factory
     public function hasNew()
     {
         foreach ($this->stack as $path => $style) {
-            if (!$this->isRendered($path)) {
+            if (! $this->isRendered($path)) {
                 return true;
             }
         }
@@ -126,8 +123,7 @@ class Factory
     /**
      * Determine wether string includes styles.
      *
-     * @param string $result
-     *
+     * @param  string $result
      * @return void
      */
     public function includesStyles(string $result)
@@ -141,13 +137,12 @@ class Factory
     /**
      * Include styles to x-styles component.
      *
-     * @param string $result
-     *
+     * @param  string $result
      * @return string
      */
     public function include(string $result)
     {
-        if (!$this->includesStyles($result)) {
+        if (! $this->includesStyles($result)) {
             return $result;
         }
 
@@ -162,8 +157,7 @@ class Factory
     /**
      * Extract lang from string.
      *
-     * @param string $string
-     *
+     * @param  string $string
      * @return string
      */
     protected function extractLang(string $string)

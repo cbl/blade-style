@@ -18,8 +18,7 @@ class CompilerEngine implements StyleEngine
     /**
      * Create a new Blade view engine instance.
      *
-     * @param \BladeStyle\Compiler\Compiler $compiler
-     *
+     * @param  \BladeStyle\Compiler\Compiler $compiler
      * @return void
      */
     public function __construct(Compiler $compiler)
@@ -30,8 +29,7 @@ class CompilerEngine implements StyleEngine
     /**
      * Get compiled style from the given path.
      *
-     * @param string $path
-     *
+     * @param  string $path
      * @return void
      */
     public function get(string $path)
