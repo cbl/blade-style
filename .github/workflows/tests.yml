@@ -76,20 +76,17 @@ jobs:
                   key:
                       dependencies-laravel-${{ matrix.laravel }}-php-${{
                       matrix.php }}-composer-${{ hashFiles('composer.json') }}
-
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: ${{ matrix.php }}
-                  extensions:
-                      dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite
-                  tools: composer:v2
-                  coverage: none
-
-            - name: Install dependencies
-              run: |
-                  composer require "laravel/framework:${{ matrix.laravel }}" "livewire/livewire" --no-interaction --no-update
-                  composer update --prefer-stable --prefer-dist --no-interaction
-
-            - name: Run PHP tests via PHPUnit
-              run: vendor/bin/phpunit
+            # - name: Setup PHP
+            #   uses: shivammathur/setup-php@v2
+            #   with:
+            #       php-version: ${{ matrix.php }}
+            #       extensions:
+            #           dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite
+            #       tools: composer:v2
+            #       coverage: none
+            # - name: Install dependencies
+            #   run: |
+            #       composer require "laravel/framework:${{ matrix.laravel }}" "livewire/livewire" --no-interaction --no-update
+            #       composer update --prefer-stable --prefer-dist --no-interaction
+            # - name: Run PHP tests via PHPUnit
+            #   run: vendor/bin/phpunit
