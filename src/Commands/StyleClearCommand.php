@@ -54,7 +54,7 @@ class StyleClearCommand extends Command
     {
         $path = $this->laravel['config']['style.compiled'];
 
-        if (!$path) {
+        if (! $path) {
             throw new RuntimeException('Style path not found.');
         }
 

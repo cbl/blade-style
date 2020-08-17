@@ -48,7 +48,7 @@ class StyleComponent extends Component
     {
         $path = $this->getPathFromTrace();
 
-        if (!$path) {
+        if (! $path) {
             return;
         }
 
@@ -65,11 +65,11 @@ class StyleComponent extends Component
     protected function getPathFromTrace()
     {
         foreach (debug_backtrace() as $trace) {
-            if (!array_key_exists('file', $trace)) {
+            if (! array_key_exists('file', $trace)) {
                 continue;
             }
 
-            if (!Str::startsWith($trace['file'], config('view.compiled'))) {
+            if (! Str::startsWith($trace['file'], config('view.compiled'))) {
                 continue;
             }
 
