@@ -92,6 +92,22 @@ You can build reusable blade components:
 </x-style>
 ```
 
+### Sass
+
+You may set a CSS extension langauge in the `lang` attribute, like so:
+
+```php
+<button class="btn">My Button</button>
+
+<x-style lang="scss">
+    $color: purple;
+
+    .btn{
+        background: $color;
+    }
+</x-style>
+```
+
 ## Optimizing Styles
 
 Blade styles share the same behavior as Views. As suggested in the
@@ -108,17 +124,3 @@ You may use the `style:clear` command to clear the style cache:
 ```shell
 php artisan style:clear
 ```
-
-## Sass
-
-To use sass in `x-style` components you must first install the compiler using
-composer.
-
-```shell
-composer require cbl/blade-style-sass
-```
-
-The sass compiler uses [scssphp](https://github.com/scssphp/scssphp) that means
-node is not needed.
-
-Now you can use sass by specifying `sass` or `scss` as `lang` attribute like so.
