@@ -44,7 +44,7 @@ example.
 The package can be easily installed via composer.
 
 ```shell
-composer requrie cbl/blade-style
+composer require cbl/blade-style
 ```
 
 now the necessary assets must be published. This includes the style.php config
